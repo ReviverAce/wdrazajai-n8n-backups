@@ -1,0 +1,367 @@
+{
+  "_backup_meta": {
+    "backed_up_at": "2026-03-01T12:45:15.683Z",
+    "n8n_instance": "https://wdrazajai.app.n8n.cloud",
+    "workflow_id": "icfBGX1RF31QQY5q",
+    "workflow_name": "MailSender",
+    "active": false,
+    "is_archived": false
+  },
+  "workflow": {
+    "updatedAt": "2025-10-12T12:59:30.000Z",
+    "createdAt": "2025-10-12T12:58:34.902Z",
+    "id": "icfBGX1RF31QQY5q",
+    "name": "MailSender",
+    "active": false,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          -560,
+          336
+        ],
+        "id": "9164caac-de4b-43ee-bd8f-f080c951e359",
+        "name": "When clicking ‘Execute workflow’"
+      },
+      {
+        "parameters": {
+          "documentId": {
+            "__rl": true,
+            "value": "1y_Fi4mpIsr8lZWCssHxeW8hSJt4U6cmcrZApIGoWZ4c",
+            "mode": "list",
+            "cachedResultName": "Lista klientów",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1y_Fi4mpIsr8lZWCssHxeW8hSJt4U6cmcrZApIGoWZ4c/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": "gid=0",
+            "mode": "list",
+            "cachedResultName": "Arkusz1",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1y_Fi4mpIsr8lZWCssHxeW8hSJt4U6cmcrZApIGoWZ4c/edit#gid=0"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.7,
+        "position": [
+          -352,
+          336
+        ],
+        "id": "0f060ca7-28cd-4642-9d35-eb5df1387a55",
+        "name": "Get row(s) in sheet"
+      },
+      {
+        "parameters": {
+          "fieldToSplitOut": "Nazwa,['Email '], ['Numer kontrahenta']",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.splitOut",
+        "typeVersion": 1,
+        "position": [
+          -160,
+          336
+        ],
+        "id": "86201aff-fcfb-4519-bffd-d0be962d92f8",
+        "name": "Split Out"
+      },
+      {
+        "parameters": {
+          "resource": "fileFolder",
+          "queryString": "={{ $json['[\\'Numer kontrahenta\\']'] }}",
+          "filter": {},
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          0,
+          0
+        ],
+        "id": "4edcb3fb-76db-4a4f-b731-3d03bc09ddaf",
+        "name": "searchFolderForCustomer"
+      },
+      {
+        "parameters": {
+          "resource": "fileFolder",
+          "filter": {
+            "folderId": {
+              "__rl": true,
+              "value": "={{ $json.id }}",
+              "mode": "id"
+            }
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          384,
+          16
+        ],
+        "id": "cf5f66b6-af9d-45b8-9f5f-4f22a4e81213",
+        "name": "searchFileInFolder"
+      },
+      {
+        "parameters": {
+          "sendTo": "={{ $('Get row(s) in sheet').item.json['Email '] }}",
+          "subject": " Testowy mail z raportem",
+          "message": "=Szanowny Panie  {{ $('Get row(s) in sheet').item.json.Nazwa }}, jebać Panu starego.",
+          "options": {
+            "attachmentsUi": {
+              "attachmentsBinary": [
+                {
+                  "property": "=data {{ $json.name }}"
+                }
+              ]
+            }
+          }
+        },
+        "type": "n8n-nodes-base.gmail",
+        "typeVersion": 2.1,
+        "position": [
+          752,
+          32
+        ],
+        "id": "8bca6294-e6be-4481-88cf-34c9ecf4430a",
+        "name": "Send a message",
+        "webhookId": "68b00279-f840-497c-9ce2-3b8146252117"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "f311fe8f-49e5-4253-99b8-16cdd3c49dd3",
+                "leftValue": "={{ $('searchFolderForCustomer').item.json.name }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "string",
+                  "operation": "exists",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          192,
+          112
+        ],
+        "id": "f7a5e58e-c4be-41c5-9425-eefd41ce223e",
+        "name": "If"
+      },
+      {
+        "parameters": {
+          "operation": "append",
+          "documentId": {
+            "__rl": true,
+            "value": "1y_Fi4mpIsr8lZWCssHxeW8hSJt4U6cmcrZApIGoWZ4c",
+            "mode": "list",
+            "cachedResultName": "Lista klientów",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1y_Fi4mpIsr8lZWCssHxeW8hSJt4U6cmcrZApIGoWZ4c/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 358350815,
+            "mode": "list",
+            "cachedResultName": "wysłane raporty",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1y_Fi4mpIsr8lZWCssHxeW8hSJt4U6cmcrZApIGoWZ4c/edit#gid=358350815"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "Email": "={{ $('Get row(s) in sheet').item.json['Email '] }}",
+              "Numer kontrahneta ": "={{ $('Get row(s) in sheet').item.json['Numer kontrahenta'] }}",
+              "Data": "={{ $now.format('YYYY-MM-DD HH:mm:ss') }}"
+            },
+            "matchingColumns": [],
+            "schema": [
+              {
+                "id": "Email",
+                "displayName": "Email",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Numer kontrahneta ",
+                "displayName": "Numer kontrahneta ",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Data",
+                "displayName": "Data",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.7,
+        "position": [
+          912,
+          32
+        ],
+        "id": "6032810d-8394-4e3e-8ab2-da4e4548eab9",
+        "name": "Append row in sheet"
+      },
+      {
+        "parameters": {
+          "operation": "download",
+          "fileId": {
+            "__rl": true,
+            "value": "={{ $json.id }}",
+            "mode": "id"
+          },
+          "options": {
+            "binaryPropertyName": "=data {{ $json.name }}"
+          }
+        },
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          592,
+          0
+        ],
+        "id": "6cee2811-9cff-4f8b-b430-3ae1d7b42238",
+        "name": "Download file"
+      }
+    ],
+    "connections": {
+      "When clicking ‘Execute workflow’": {
+        "main": [
+          [
+            {
+              "node": "Get row(s) in sheet",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get row(s) in sheet": {
+        "main": [
+          [
+            {
+              "node": "Split Out",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Split Out": {
+        "main": [
+          [
+            {
+              "node": "searchFolderForCustomer",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "searchFolderForCustomer": {
+        "main": [
+          [
+            {
+              "node": "If",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "searchFileInFolder": {
+        "main": [
+          [
+            {
+              "node": "Download file",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If": {
+        "main": [
+          [
+            {
+              "node": "searchFileInFolder",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Send a message": {
+        "main": [
+          [
+            {
+              "node": "Append row in sheet",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Download file": {
+        "main": [
+          [
+            {
+              "node": "Send a message",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "staticData": null,
+    "meta": null,
+    "pinData": {},
+    "versionId": "f09f9869-2da5-42aa-a7b6-f7de562da979",
+    "activeVersionId": null,
+    "triggerCount": 0,
+    "shared": [
+      {
+        "updatedAt": "2025-10-12T12:58:34.907Z",
+        "createdAt": "2025-10-12T12:58:34.907Z",
+        "role": "workflow:owner",
+        "workflowId": "icfBGX1RF31QQY5q",
+        "projectId": "2jlhRfElT6lOiXuI"
+      }
+    ],
+    "activeVersion": null,
+    "tags": []
+  }
+}
