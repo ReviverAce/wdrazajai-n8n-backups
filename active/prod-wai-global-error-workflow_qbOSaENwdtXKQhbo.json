@@ -1,0 +1,639 @@
+{
+  "_backup_meta": {
+    "backed_up_at": "2026-03-01T12:45:15.685Z",
+    "n8n_instance": "https://wdrazajai.app.n8n.cloud",
+    "workflow_id": "qbOSaENwdtXKQhbo",
+    "workflow_name": "[PROD] WAI  - GLOBAL ERROR WORKFLOW",
+    "active": true,
+    "is_archived": false
+  },
+  "workflow": {
+    "updatedAt": "2026-02-13T02:26:10.843Z",
+    "createdAt": "2025-11-13T17:55:19.088Z",
+    "id": "qbOSaENwdtXKQhbo",
+    "name": "[PROD] WAI  - GLOBAL ERROR WORKFLOW",
+    "active": true,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.errorTrigger",
+        "typeVersion": 1,
+        "position": [
+          0,
+          0
+        ],
+        "id": "6b6a0284-294a-4732-b87c-e32daac0bc2f",
+        "name": "Error Trigger"
+      },
+      {
+        "parameters": {
+          "operation": "get",
+          "workflowId": {
+            "__rl": true,
+            "value": "={{ $json.execution.id }} {{ $json.execution.url }}",
+            "mode": "id"
+          },
+          "requestOptions": {}
+        },
+        "type": "n8n-nodes-base.n8n",
+        "typeVersion": 1,
+        "position": [
+          208,
+          -128
+        ],
+        "id": "c3d6d392-de04-418d-8952-bd91da813504",
+        "name": "Get a workflow",
+        "credentials": {
+          "n8nApi": {
+            "id": "nD9ybA2ms0TbxZJS",
+            "name": "[WAI] N8N - MAIN"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "d34b4061-e9d9-416c-b3a5-4fe9003a5a25",
+                "name": "workflow_owner",
+                "value": "={{ $json.tags[0].name }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          432,
+          -128
+        ],
+        "id": "55e5efe8-e9b4-4b90-a90b-d0404b2ac287",
+        "name": "Edit Fields"
+      },
+      {
+        "parameters": {
+          "mode": "combine",
+          "combineBy": "combineByPosition",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.merge",
+        "typeVersion": 3.2,
+        "position": [
+          624,
+          0
+        ],
+        "id": "329eeaf8-852d-462b-8a2b-0f90ba5888e2",
+        "name": "Merge"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "abe3df1e-5be6-4dc4-ba67-e2307b454f7c",
+                "name": "message",
+                "value": "={{ $json.workflow.name }} just failed execution (ID: {{ $json.execution.id }})\n\nError: {{ $json.execution.error.message }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          208,
+          96
+        ],
+        "id": "2be1760c-41ee-4dd6-8780-7ae9b3ab59be",
+        "name": "Edit Fields1"
+      },
+      {
+        "parameters": {
+          "content": "Jak stworzymy sobie oddzielne konta, to każdy będzie mógł dostawać wiad tylko o swoich errorach",
+          "height": 112,
+          "width": 192
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          832,
+          -208
+        ],
+        "id": "9501058a-d705-4514-b104-6952fff74bd8",
+        "name": "Sticky Note"
+      },
+      {
+        "parameters": {
+          "jsCode": "return [\n  \n  { \"name\": \"Rafał\", \n    \"email\": \"maxim@acme.com\",\n  },\n  { \"name\": \"Filip\",\n    \"email\": \"anna@acme.com\",\n  },\n  { \"name\": \"Mikołaj\",\n    \"email\": \"paul@acme.com\",\n  } \n  ]"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          864,
+          -96
+        ],
+        "id": "0082cdb5-5fb2-41ea-8f8e-2d43cf945a1d",
+        "name": "Code in JavaScript"
+      },
+      {
+        "parameters": {
+          "mode": "combine",
+          "advanced": true,
+          "mergeByFields": {
+            "values": [
+              {
+                "field1": "name",
+                "field2": "workflow_owner"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.merge",
+        "typeVersion": 3.2,
+        "position": [
+          1184,
+          0
+        ],
+        "id": "c7a7ce28-b89b-4ceb-8647-5dd14c66b164",
+        "name": "Merge1"
+      },
+      {
+        "parameters": {
+          "content": "Do wyboru zostają kanały przekazania informacji do nas. \n\nMail/Telegram/Slack?",
+          "height": 128,
+          "width": 176
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          1248,
+          -160
+        ],
+        "id": "5f415e6d-64fb-4fa9-a8a3-805fbb65dcb7",
+        "name": "Sticky Note1"
+      },
+      {
+        "parameters": {
+          "sendTo": "={{ $json.email }}",
+          "subject": "Error on your workflow",
+          "message": "={{ $('Error Trigger').item.json.execution.error.message }}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.gmail",
+        "typeVersion": 2.1,
+        "position": [
+          1472,
+          -80
+        ],
+        "id": "6dfa34f7-886b-4531-9c60-30cb6c4eb616",
+        "name": "Send a message",
+        "webhookId": "b4766340-d6fd-485b-9d10-a38cebceeccc",
+        "credentials": {
+          "gmailOAuth2": {
+            "id": "OFVvKTJMK5GQYalJ",
+            "name": "[WAI] GMAIL - MAIN"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Error Trigger": {
+        "main": [
+          [
+            {
+              "node": "Get a workflow",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Edit Fields1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get a workflow": {
+        "main": [
+          [
+            {
+              "node": "Edit Fields",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Edit Fields": {
+        "main": [
+          [
+            {
+              "node": "Merge",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Edit Fields1": {
+        "main": [
+          [
+            {
+              "node": "Merge",
+              "type": "main",
+              "index": 1
+            }
+          ]
+        ]
+      },
+      "Merge": {
+        "main": [
+          [
+            {
+              "node": "Code in JavaScript",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Merge1",
+              "type": "main",
+              "index": 1
+            }
+          ]
+        ]
+      },
+      "Code in JavaScript": {
+        "main": [
+          [
+            {
+              "node": "Merge1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Merge1": {
+        "main": [
+          [
+            {
+              "node": "Send a message",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "staticData": null,
+    "meta": {
+      "templateCredsSetupCompleted": true
+    },
+    "pinData": {
+      "Error Trigger": [
+        {
+          "json": {
+            "execution": {
+              "id": 231,
+              "url": "https://wdrazajai.app.n8n.cloud/execution/workflow/1",
+              "retryOf": "34",
+              "error": {
+                "message": "Example Error Message",
+                "stack": "Stacktrace"
+              },
+              "lastNodeExecuted": "Node With Error",
+              "mode": "manual"
+            },
+            "workflow": {
+              "id": "1",
+              "name": "Example Workflow"
+            }
+          }
+        }
+      ],
+      "Edit Fields": [
+        {
+          "json": {
+            "name": "First item",
+            "code": 1
+          }
+        },
+        {
+          "json": {
+            "name": "Second item",
+            "code": 2
+          }
+        }
+      ]
+    },
+    "versionId": "8025fa13-8a6e-4cca-9e63-d48d0ae86752",
+    "activeVersionId": "52da7db5-0775-4c67-8c5a-be657806691f",
+    "triggerCount": 0,
+    "shared": [
+      {
+        "updatedAt": "2025-11-13T17:55:19.093Z",
+        "createdAt": "2025-11-13T17:55:19.093Z",
+        "role": "workflow:owner",
+        "workflowId": "qbOSaENwdtXKQhbo",
+        "projectId": "2jlhRfElT6lOiXuI"
+      }
+    ],
+    "activeVersion": {
+      "updatedAt": "2025-11-27T19:27:15.707Z",
+      "createdAt": "2025-11-27T19:27:15.707Z",
+      "versionId": "52da7db5-0775-4c67-8c5a-be657806691f",
+      "workflowId": "qbOSaENwdtXKQhbo",
+      "nodes": [
+        {
+          "parameters": {},
+          "type": "n8n-nodes-base.errorTrigger",
+          "typeVersion": 1,
+          "position": [
+            0,
+            0
+          ],
+          "id": "6b6a0284-294a-4732-b87c-e32daac0bc2f",
+          "name": "Error Trigger"
+        },
+        {
+          "parameters": {
+            "operation": "get",
+            "workflowId": {
+              "__rl": true,
+              "value": "={{ $json.execution.id }} {{ $json.execution.url }}",
+              "mode": "id"
+            },
+            "requestOptions": {}
+          },
+          "type": "n8n-nodes-base.n8n",
+          "typeVersion": 1,
+          "position": [
+            208,
+            -128
+          ],
+          "id": "c3d6d392-de04-418d-8952-bd91da813504",
+          "name": "Get a workflow",
+          "credentials": {
+            "n8nApi": {
+              "id": "nD9ybA2ms0TbxZJS",
+              "name": "n8n account"
+            }
+          }
+        },
+        {
+          "parameters": {
+            "assignments": {
+              "assignments": [
+                {
+                  "id": "d34b4061-e9d9-416c-b3a5-4fe9003a5a25",
+                  "name": "workflow_owner",
+                  "value": "={{ $json.tags[0].name }}",
+                  "type": "string"
+                }
+              ]
+            },
+            "options": {}
+          },
+          "type": "n8n-nodes-base.set",
+          "typeVersion": 3.4,
+          "position": [
+            432,
+            -128
+          ],
+          "id": "55e5efe8-e9b4-4b90-a90b-d0404b2ac287",
+          "name": "Edit Fields"
+        },
+        {
+          "parameters": {
+            "mode": "combine",
+            "combineBy": "combineByPosition",
+            "options": {}
+          },
+          "type": "n8n-nodes-base.merge",
+          "typeVersion": 3.2,
+          "position": [
+            624,
+            0
+          ],
+          "id": "329eeaf8-852d-462b-8a2b-0f90ba5888e2",
+          "name": "Merge"
+        },
+        {
+          "parameters": {
+            "assignments": {
+              "assignments": [
+                {
+                  "id": "abe3df1e-5be6-4dc4-ba67-e2307b454f7c",
+                  "name": "message",
+                  "value": "={{ $json.workflow.name }} just failed execution (ID: {{ $json.execution.id }})\n\nError: {{ $json.execution.error.message }}",
+                  "type": "string"
+                }
+              ]
+            },
+            "options": {}
+          },
+          "type": "n8n-nodes-base.set",
+          "typeVersion": 3.4,
+          "position": [
+            208,
+            96
+          ],
+          "id": "2be1760c-41ee-4dd6-8780-7ae9b3ab59be",
+          "name": "Edit Fields1"
+        },
+        {
+          "parameters": {
+            "content": "Jak stworzymy sobie oddzielne konta, to każdy będzie mógł dostawać wiad tylko o swoich errorach",
+            "height": 112,
+            "width": 192
+          },
+          "type": "n8n-nodes-base.stickyNote",
+          "typeVersion": 1,
+          "position": [
+            832,
+            -208
+          ],
+          "id": "9501058a-d705-4514-b104-6952fff74bd8",
+          "name": "Sticky Note"
+        },
+        {
+          "parameters": {
+            "jsCode": "return [\n  \n  { \"name\": \"Rafał\", \n    \"email\": \"maxim@acme.com\",\n  },\n  { \"name\": \"Filip\",\n    \"email\": \"anna@acme.com\",\n  },\n  { \"name\": \"Mikołaj\",\n    \"email\": \"paul@acme.com\",\n  } \n  ]"
+          },
+          "type": "n8n-nodes-base.code",
+          "typeVersion": 2,
+          "position": [
+            864,
+            -96
+          ],
+          "id": "0082cdb5-5fb2-41ea-8f8e-2d43cf945a1d",
+          "name": "Code in JavaScript"
+        },
+        {
+          "parameters": {
+            "mode": "combine",
+            "advanced": true,
+            "mergeByFields": {
+              "values": [
+                {
+                  "field1": "name",
+                  "field2": "workflow_owner"
+                }
+              ]
+            },
+            "options": {}
+          },
+          "type": "n8n-nodes-base.merge",
+          "typeVersion": 3.2,
+          "position": [
+            1184,
+            0
+          ],
+          "id": "c7a7ce28-b89b-4ceb-8647-5dd14c66b164",
+          "name": "Merge1"
+        },
+        {
+          "parameters": {
+            "content": "Do wyboru zostają kanały przekazania informacji do nas. \n\nMail/Telegram/Slack?",
+            "height": 128,
+            "width": 176
+          },
+          "type": "n8n-nodes-base.stickyNote",
+          "typeVersion": 1,
+          "position": [
+            1248,
+            -160
+          ],
+          "id": "5f415e6d-64fb-4fa9-a8a3-805fbb65dcb7",
+          "name": "Sticky Note1"
+        },
+        {
+          "parameters": {
+            "sendTo": "={{ $json.email }}",
+            "subject": "Error on your workflow",
+            "message": "={{ $('Error Trigger').item.json.execution.error.message }}",
+            "options": {}
+          },
+          "type": "n8n-nodes-base.gmail",
+          "typeVersion": 2.1,
+          "position": [
+            1472,
+            -80
+          ],
+          "id": "6dfa34f7-886b-4531-9c60-30cb6c4eb616",
+          "name": "Send a message",
+          "webhookId": "b4766340-d6fd-485b-9d10-a38cebceeccc",
+          "credentials": {
+            "gmailOAuth2": {
+              "id": "OFVvKTJMK5GQYalJ",
+              "name": "info@wdrazaj.ai"
+            }
+          }
+        }
+      ],
+      "connections": {
+        "Error Trigger": {
+          "main": [
+            [
+              {
+                "node": "Get a workflow",
+                "type": "main",
+                "index": 0
+              },
+              {
+                "node": "Edit Fields1",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Get a workflow": {
+          "main": [
+            [
+              {
+                "node": "Edit Fields",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Edit Fields": {
+          "main": [
+            [
+              {
+                "node": "Merge",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Edit Fields1": {
+          "main": [
+            [
+              {
+                "node": "Merge",
+                "type": "main",
+                "index": 1
+              }
+            ]
+          ]
+        },
+        "Merge": {
+          "main": [
+            [
+              {
+                "node": "Code in JavaScript",
+                "type": "main",
+                "index": 0
+              },
+              {
+                "node": "Merge1",
+                "type": "main",
+                "index": 1
+              }
+            ]
+          ]
+        },
+        "Code in JavaScript": {
+          "main": [
+            [
+              {
+                "node": "Merge1",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Merge1": {
+          "main": [
+            [
+              {
+                "node": "Send a message",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        }
+      },
+      "authors": "system migration",
+      "name": null,
+      "description": null,
+      "autosaved": false
+    },
+    "tags": []
+  }
+}
