@@ -1,0 +1,355 @@
+{
+  "_backup_meta": {
+    "backed_up_at": "2026-03-01T12:45:15.666Z",
+    "n8n_instance": "https://wdrazajai.app.n8n.cloud",
+    "workflow_id": "VUTTefqWC9CjyAHdCTq79",
+    "workflow_name": "[DEV] INEL - MONITORING",
+    "active": true,
+    "is_archived": false
+  },
+  "workflow": {
+    "updatedAt": "2026-02-09T13:37:22.537Z",
+    "createdAt": "2026-01-24T02:05:07.254Z",
+    "id": "VUTTefqWC9CjyAHdCTq79",
+    "name": "[DEV] INEL - MONITORING",
+    "active": true,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "field": "cronExpression",
+                "expression": "0 9 1 * *"
+              }
+            ]
+          }
+        },
+        "id": "d4c436f8-af02-41c8-8bfb-10bf7cb58723",
+        "name": "Monthly Trigger",
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.3,
+        "position": [
+          448,
+          208
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "getAll",
+          "tableId": "automation_logs",
+          "returnAll": true,
+          "filterType": "string",
+          "filterString": "={{ (() => { const now = new Date(); const firstDayThisMonth = new Date(now.getFullYear(), now.getMonth(), 1); const firstDayLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1); return 'created_at.gte.' + firstDayLastMonth.toISOString() + ',created_at.lt.' + firstDayThisMonth.toISOString(); })() }}"
+        },
+        "id": "92879766-65e1-45b8-933b-e2765e567142",
+        "name": "Get Last Month Logs",
+        "type": "n8n-nodes-base.supabase",
+        "typeVersion": 1,
+        "position": [
+          896,
+          208
+        ],
+        "credentials": {
+          "supabaseApi": {
+            "id": "pDckhjeF4Smhrova",
+            "name": "[WAI] SUPABASE - RAG"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "const logs = $input.all();\n\n// Calculate date range for report title\nconst now = new Date();\nconst lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);\nconst monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];\nconst reportMonth = monthNames[lastMonth.getMonth()];\nconst reportYear = lastMonth.getFullYear();\n\nconst stats = {\n  reportPeriod: `${reportMonth} ${reportYear}`,\n  total: logs.length,\n  success: logs.filter(l => l.json.status === 'success').length,\n  errors: logs.filter(l => l.json.status === 'error').length,\n  timeSaved: logs.reduce((sum, l) => sum + (l.json.time_saved_minutes || 0), 0),\n  byWorkflow: {},\n  errorList: []\n};\n\nstats.successRate = stats.total > 0\n  ? ((stats.success / stats.total) * 100).toFixed(1)\n  : 0;\n\nstats.timeSavedHours = (stats.timeSaved / 60).toFixed(1);\n\n// Group by workflow\nlogs.forEach(l => {\n  const wf = l.json.workflow_name || 'Unknown';\n  if (!stats.byWorkflow[wf]) {\n    stats.byWorkflow[wf] = { total: 0, success: 0, errors: 0, timeSaved: 0 };\n  }\n  stats.byWorkflow[wf].total++;\n  stats.byWorkflow[wf].timeSaved += l.json.time_saved_minutes || 0;\n  if (l.json.status === 'success') stats.byWorkflow[wf].success++;\n  else stats.byWorkflow[wf].errors++;\n});\n\n// Collect errors (last 10)\nstats.errorList = logs\n  .filter(l => l.json.status === 'error')\n  .slice(-10)\n  .map(l => ({\n    workflow: l.json.workflow_name || 'Unknown',\n    message: l.json.error_message || 'No message',\n    url: l.json.execution_url || '',\n    date: l.json.created_at\n  }));\n\nreturn [{ json: stats }];"
+        },
+        "id": "501d9fd0-09bb-4932-a5a0-0811952bd119",
+        "name": "Calculate Statistics",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1120,
+          208
+        ]
+      },
+      {
+        "parameters": {
+          "sendTo": "info@wdrazaj.ai",
+          "subject": "={{ '[Wdrażaj.ai] Monthly Automation Report: '+ $('Set project name').first().json.project_name + ' - ' + $json.reportPeriod }}",
+          "message": "=<!DOCTYPE html>\n<html>\n<head>\n  <style>\n    body { font-family: Arial, sans-serif; background: #f5f5f5; padding: 20px; }\n    .container { max-width: 700px; margin: 0 auto; background: white; border-radius: 8px; padding: 30px; }\n    h1 { color: #2d3748; border-bottom: 2px solid #4299e1; padding-bottom: 10px; }\n    h2 { color: #4a5568; margin-top: 30px; }\n    .stat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin: 20px 0; }\n    .stat-box { background: #edf2f7; padding: 15px; border-radius: 6px; text-align: center; }\n    .stat-value { font-size: 28px; font-weight: bold; color: #2b6cb0; }\n    .stat-label { color: #718096; font-size: 14px; }\n    .success { color: #38a169; }\n    .error { color: #e53e3e; }\n    table { width: 100%; border-collapse: collapse; margin: 15px 0; }\n    th, td { padding: 10px; text-align: left; border-bottom: 1px solid #e2e8f0; }\n    th { background: #4299e1; color: white; }\n    tr:nth-child(even) { background: #f7fafc; }\n    .error-card { background: #fff5f5; border-left: 4px solid #e53e3e; padding: 10px; margin: 10px 0; border-radius: 4px; }\n    .footer { margin-top: 30px; padding-top: 20px; border-top: 1px solid #e2e8f0; color: #a0aec0; font-size: 12px; text-align: center; }\n    a { color: #4299e1; }\n  </style>\n</head>\n<body>\n  <div class=\"container\">\n    <h1>Monthly Automation Report</h1>\n    <p><strong>Client:</strong> {{$('Set project name').first().json.project_name}} | <strong>Period:</strong> {{ $json.reportPeriod }}</p>\n    \n    <h2>Summary</h2>\n    <div class=\"stat-grid\">\n      <div class=\"stat-box\">\n        <div class=\"stat-value\">{{ $json.total }}</div>\n        <div class=\"stat-label\">Total Executions</div>\n      </div>\n      <div class=\"stat-box\">\n        <div class=\"stat-value success\">{{ $json.successRate }}%</div>\n        <div class=\"stat-label\">Success Rate</div>\n      </div>\n      <div class=\"stat-box\">\n        <div class=\"stat-value error\">{{ $json.errors }}</div>\n        <div class=\"stat-label\">Errors</div>\n      </div>\n      <div class=\"stat-box\">\n        <div class=\"stat-value\">{{ $json.timeSavedHours }}h</div>\n        <div class=\"stat-label\">Time Saved</div>\n      </div>\n    </div>\n\n    <h2>Breakdown by Workflow</h2>\n    <table>\n      <tr><th>Workflow</th><th>Executions</th><th>Success</th><th>Errors</th><th>Time Saved</th></tr>\n      {{ Object.entries($json.byWorkflow).map(([name, data]) => '<tr><td>' + name + '</td><td>' + data.total + '</td><td class=\"success\">' + data.success + '</td><td class=\"error\">' + data.errors + '</td><td>' + (data.timeSaved/60).toFixed(1) + 'h</td></tr>').join('') }}\n    </table>\n\n    {{ $json.errorList.length > 0 ? '<h2>Recent Errors</h2>' + $json.errorList.map(e => '<div class=\"error-card\"><strong>' + e.workflow + '</strong><br><small>' + e.date + '</small><br>' + e.message + (e.url ? '<br><a href=\"' + e.url + '\" target=\"_blank\">Debug Link</a>' : '') + '</div>').join('') : '' }}\n\n    <div class=\"footer\">\n      Generated by <strong>Wdrazaj.ai</strong> Automation Engine<br>\n      <a href=\"https://wdrazaj.ai\">wdrazaj.ai</a>\n    </div>\n  </div>\n</body>\n</html>",
+          "options": {}
+        },
+        "id": "ab440efa-ace5-40b5-93d0-cbd6d7df9365",
+        "name": "Send Report Email",
+        "type": "n8n-nodes-base.gmail",
+        "typeVersion": 2.2,
+        "position": [
+          1344,
+          208
+        ],
+        "webhookId": "25e0f10d-a814-4f40-b136-3715b1240ca5",
+        "credentials": {
+          "gmailOAuth2": {
+            "id": "OFVvKTJMK5GQYalJ",
+            "name": "[WAI] GMAIL - MAIN"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "7529c427-7ec7-4064-b832-e95025574c54",
+                "name": "project_name",
+                "value": "INEL",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          672,
+          208
+        ],
+        "id": "3afe0850-27e6-46eb-be86-a1846e2b7adf",
+        "name": "Set project name"
+      }
+    ],
+    "connections": {
+      "Monthly Trigger": {
+        "main": [
+          [
+            {
+              "node": "Set project name",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get Last Month Logs": {
+        "main": [
+          [
+            {
+              "node": "Calculate Statistics",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Calculate Statistics": {
+        "main": [
+          [
+            {
+              "node": "Send Report Email",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Set project name": {
+        "main": [
+          [
+            {
+              "node": "Get Last Month Logs",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1",
+      "availableInMCP": false,
+      "callerPolicy": "workflowsFromSameOwner",
+      "timeSavedMode": "fixed",
+      "errorWorkflow": "gfVnKUahFYsoEF8EyW3U8"
+    },
+    "staticData": {
+      "node:Monthly Trigger": {
+        "recurrenceRules": []
+      }
+    },
+    "meta": null,
+    "pinData": {},
+    "versionId": "8a6670a5-7ee2-4d34-868d-39da7a505a6c",
+    "activeVersionId": "8a6670a5-7ee2-4d34-868d-39da7a505a6c",
+    "triggerCount": 1,
+    "shared": [
+      {
+        "updatedAt": "2026-01-24T02:05:07.264Z",
+        "createdAt": "2026-01-24T02:05:07.264Z",
+        "role": "workflow:owner",
+        "workflowId": "VUTTefqWC9CjyAHdCTq79",
+        "projectId": "2jlhRfElT6lOiXuI"
+      }
+    ],
+    "activeVersion": {
+      "updatedAt": "2026-02-09T13:37:30.000Z",
+      "createdAt": "2026-02-09T13:37:22.538Z",
+      "versionId": "8a6670a5-7ee2-4d34-868d-39da7a505a6c",
+      "workflowId": "VUTTefqWC9CjyAHdCTq79",
+      "nodes": [
+        {
+          "parameters": {
+            "rule": {
+              "interval": [
+                {
+                  "field": "cronExpression",
+                  "expression": "0 9 1 * *"
+                }
+              ]
+            }
+          },
+          "id": "d4c436f8-af02-41c8-8bfb-10bf7cb58723",
+          "name": "Monthly Trigger",
+          "type": "n8n-nodes-base.scheduleTrigger",
+          "typeVersion": 1.3,
+          "position": [
+            448,
+            208
+          ]
+        },
+        {
+          "parameters": {
+            "operation": "getAll",
+            "tableId": "automation_logs",
+            "returnAll": true,
+            "filterType": "string",
+            "filterString": "={{ (() => { const now = new Date(); const firstDayThisMonth = new Date(now.getFullYear(), now.getMonth(), 1); const firstDayLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1); return 'created_at.gte.' + firstDayLastMonth.toISOString() + ',created_at.lt.' + firstDayThisMonth.toISOString(); })() }}"
+          },
+          "id": "92879766-65e1-45b8-933b-e2765e567142",
+          "name": "Get Last Month Logs",
+          "type": "n8n-nodes-base.supabase",
+          "typeVersion": 1,
+          "position": [
+            896,
+            208
+          ],
+          "credentials": {
+            "supabaseApi": {
+              "id": "pDckhjeF4Smhrova",
+              "name": "[WAI] SUPABASE - RAG"
+            }
+          }
+        },
+        {
+          "parameters": {
+            "jsCode": "const logs = $input.all();\n\n// Calculate date range for report title\nconst now = new Date();\nconst lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);\nconst monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];\nconst reportMonth = monthNames[lastMonth.getMonth()];\nconst reportYear = lastMonth.getFullYear();\n\nconst stats = {\n  reportPeriod: `${reportMonth} ${reportYear}`,\n  total: logs.length,\n  success: logs.filter(l => l.json.status === 'success').length,\n  errors: logs.filter(l => l.json.status === 'error').length,\n  timeSaved: logs.reduce((sum, l) => sum + (l.json.time_saved_minutes || 0), 0),\n  byWorkflow: {},\n  errorList: []\n};\n\nstats.successRate = stats.total > 0\n  ? ((stats.success / stats.total) * 100).toFixed(1)\n  : 0;\n\nstats.timeSavedHours = (stats.timeSaved / 60).toFixed(1);\n\n// Group by workflow\nlogs.forEach(l => {\n  const wf = l.json.workflow_name || 'Unknown';\n  if (!stats.byWorkflow[wf]) {\n    stats.byWorkflow[wf] = { total: 0, success: 0, errors: 0, timeSaved: 0 };\n  }\n  stats.byWorkflow[wf].total++;\n  stats.byWorkflow[wf].timeSaved += l.json.time_saved_minutes || 0;\n  if (l.json.status === 'success') stats.byWorkflow[wf].success++;\n  else stats.byWorkflow[wf].errors++;\n});\n\n// Collect errors (last 10)\nstats.errorList = logs\n  .filter(l => l.json.status === 'error')\n  .slice(-10)\n  .map(l => ({\n    workflow: l.json.workflow_name || 'Unknown',\n    message: l.json.error_message || 'No message',\n    url: l.json.execution_url || '',\n    date: l.json.created_at\n  }));\n\nreturn [{ json: stats }];"
+          },
+          "id": "501d9fd0-09bb-4932-a5a0-0811952bd119",
+          "name": "Calculate Statistics",
+          "type": "n8n-nodes-base.code",
+          "typeVersion": 2,
+          "position": [
+            1120,
+            208
+          ]
+        },
+        {
+          "parameters": {
+            "sendTo": "info@wdrazaj.ai",
+            "subject": "={{ '[Wdrażaj.ai] Monthly Automation Report: '+ $('Set project name').first().json.project_name + ' - ' + $json.reportPeriod }}",
+            "message": "=<!DOCTYPE html>\n<html>\n<head>\n  <style>\n    body { font-family: Arial, sans-serif; background: #f5f5f5; padding: 20px; }\n    .container { max-width: 700px; margin: 0 auto; background: white; border-radius: 8px; padding: 30px; }\n    h1 { color: #2d3748; border-bottom: 2px solid #4299e1; padding-bottom: 10px; }\n    h2 { color: #4a5568; margin-top: 30px; }\n    .stat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin: 20px 0; }\n    .stat-box { background: #edf2f7; padding: 15px; border-radius: 6px; text-align: center; }\n    .stat-value { font-size: 28px; font-weight: bold; color: #2b6cb0; }\n    .stat-label { color: #718096; font-size: 14px; }\n    .success { color: #38a169; }\n    .error { color: #e53e3e; }\n    table { width: 100%; border-collapse: collapse; margin: 15px 0; }\n    th, td { padding: 10px; text-align: left; border-bottom: 1px solid #e2e8f0; }\n    th { background: #4299e1; color: white; }\n    tr:nth-child(even) { background: #f7fafc; }\n    .error-card { background: #fff5f5; border-left: 4px solid #e53e3e; padding: 10px; margin: 10px 0; border-radius: 4px; }\n    .footer { margin-top: 30px; padding-top: 20px; border-top: 1px solid #e2e8f0; color: #a0aec0; font-size: 12px; text-align: center; }\n    a { color: #4299e1; }\n  </style>\n</head>\n<body>\n  <div class=\"container\">\n    <h1>Monthly Automation Report</h1>\n    <p><strong>Client:</strong> {{$('Set project name').first().json.project_name}} | <strong>Period:</strong> {{ $json.reportPeriod }}</p>\n    \n    <h2>Summary</h2>\n    <div class=\"stat-grid\">\n      <div class=\"stat-box\">\n        <div class=\"stat-value\">{{ $json.total }}</div>\n        <div class=\"stat-label\">Total Executions</div>\n      </div>\n      <div class=\"stat-box\">\n        <div class=\"stat-value success\">{{ $json.successRate }}%</div>\n        <div class=\"stat-label\">Success Rate</div>\n      </div>\n      <div class=\"stat-box\">\n        <div class=\"stat-value error\">{{ $json.errors }}</div>\n        <div class=\"stat-label\">Errors</div>\n      </div>\n      <div class=\"stat-box\">\n        <div class=\"stat-value\">{{ $json.timeSavedHours }}h</div>\n        <div class=\"stat-label\">Time Saved</div>\n      </div>\n    </div>\n\n    <h2>Breakdown by Workflow</h2>\n    <table>\n      <tr><th>Workflow</th><th>Executions</th><th>Success</th><th>Errors</th><th>Time Saved</th></tr>\n      {{ Object.entries($json.byWorkflow).map(([name, data]) => '<tr><td>' + name + '</td><td>' + data.total + '</td><td class=\"success\">' + data.success + '</td><td class=\"error\">' + data.errors + '</td><td>' + (data.timeSaved/60).toFixed(1) + 'h</td></tr>').join('') }}\n    </table>\n\n    {{ $json.errorList.length > 0 ? '<h2>Recent Errors</h2>' + $json.errorList.map(e => '<div class=\"error-card\"><strong>' + e.workflow + '</strong><br><small>' + e.date + '</small><br>' + e.message + (e.url ? '<br><a href=\"' + e.url + '\" target=\"_blank\">Debug Link</a>' : '') + '</div>').join('') : '' }}\n\n    <div class=\"footer\">\n      Generated by <strong>Wdrazaj.ai</strong> Automation Engine<br>\n      <a href=\"https://wdrazaj.ai\">wdrazaj.ai</a>\n    </div>\n  </div>\n</body>\n</html>",
+            "options": {}
+          },
+          "id": "ab440efa-ace5-40b5-93d0-cbd6d7df9365",
+          "name": "Send Report Email",
+          "type": "n8n-nodes-base.gmail",
+          "typeVersion": 2.2,
+          "position": [
+            1344,
+            208
+          ],
+          "webhookId": "25e0f10d-a814-4f40-b136-3715b1240ca5",
+          "credentials": {
+            "gmailOAuth2": {
+              "id": "OFVvKTJMK5GQYalJ",
+              "name": "[WAI] GMAIL - MAIN"
+            }
+          }
+        },
+        {
+          "parameters": {
+            "assignments": {
+              "assignments": [
+                {
+                  "id": "7529c427-7ec7-4064-b832-e95025574c54",
+                  "name": "project_name",
+                  "value": "INEL",
+                  "type": "string"
+                }
+              ]
+            },
+            "options": {}
+          },
+          "type": "n8n-nodes-base.set",
+          "typeVersion": 3.4,
+          "position": [
+            672,
+            208
+          ],
+          "id": "3afe0850-27e6-46eb-be86-a1846e2b7adf",
+          "name": "Set project name"
+        }
+      ],
+      "connections": {
+        "Monthly Trigger": {
+          "main": [
+            [
+              {
+                "node": "Set project name",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Get Last Month Logs": {
+          "main": [
+            [
+              {
+                "node": "Calculate Statistics",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Calculate Statistics": {
+          "main": [
+            [
+              {
+                "node": "Send Report Email",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Set project name": {
+          "main": [
+            [
+              {
+                "node": "Get Last Month Logs",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        }
+      },
+      "authors": "Wdrazaj AI",
+      "name": "Version 8a6670a5",
+      "description": "",
+      "autosaved": true
+    },
+    "tags": []
+  }
+}
