@@ -1,0 +1,247 @@
+{
+  "_backup_meta": {
+    "backed_up_at": "2026-03-01T12:45:15.646Z",
+    "n8n_instance": "https://wdrazajai.app.n8n.cloud",
+    "workflow_id": "6hDD8ikmeV4XpdEM",
+    "workflow_name": "My Sub-workflow",
+    "active": false,
+    "is_archived": false
+  },
+  "workflow": {
+    "updatedAt": "2025-11-05T15:00:12.000Z",
+    "createdAt": "2025-11-05T15:00:12.916Z",
+    "id": "6hDD8ikmeV4XpdEM",
+    "name": "My Sub-workflow",
+    "active": false,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {
+          "preBuiltAgentsCalloutGmail": "",
+          "authentication": "oAuth2",
+          "resource": "message",
+          "operation": "send",
+          "sendTo": "rafal.marks20@gmail.com",
+          "subject": "=={{ $('System Prompt').first().json.report_title }}",
+          "emailType": "html",
+          "message": "={{ `<div style=\"white-space:pre-wrap;font-family:Segoe UI,Arial,sans-serif;line-height:1.6;font-size:15px;color:#222;\">${$json.text.replaceAll('\\\\n','<br><br>')}</div>` }}\n",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.gmail",
+        "typeVersion": 2.1,
+        "position": [
+          2032,
+          464
+        ],
+        "id": "34f4c0d2-1875-447b-9dc9-d12ae6202f0d",
+        "name": "Send a message",
+        "webhookId": "78b5cb39-0e24-457a-8c8c-7f7e007da2f3",
+        "credentials": {
+          "gmailOAuth2": {
+            "id": "OFVvKTJMK5GQYalJ",
+            "name": "info@wdrazaj.ai"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "notice": "",
+          "model": {
+            "value": "gpt-4.1-mini",
+            "mode": "id"
+          },
+          "options": {
+            "maxTokens": 2000,
+            "temperature": 0.2
+          }
+        },
+        "id": "a681ca0b-651d-46be-8d3a-7ead160e1fc7",
+        "name": "OpenAI Chat Model",
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+        "typeVersion": 1.2,
+        "position": [
+          1536,
+          432
+        ],
+        "credentials": {
+          "openAiApi": {
+            "id": "0PmreRG9VqAnmyU6",
+            "name": "WdrazajAI"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "generalNotice": "",
+          "respondWith": "firstIncomingItem",
+          "options": {
+            "responseCode": 200,
+            "responseHeaders": {
+              "entries": [
+                {
+                  "name": "Content-Type",
+                  "value": "=text/markdown; charset=utf-8"
+                },
+                {
+                  "name": "Access-Control-Allow-Origin",
+                  "value": "*"
+                },
+                {
+                  "name": "Access-Control-Allow-Headers",
+                  "value": "Content-Type"
+                }
+              ]
+            },
+            "responseKey": "text"
+          }
+        },
+        "id": "033c6d83-4a3c-430a-82a8-9de80c012660",
+        "name": "Respond to Webhook",
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1,
+        "position": [
+          2032,
+          240
+        ]
+      },
+      {
+        "parameters": {
+          "mode": "runOnceForAllItems",
+          "language": "javaScript",
+          "jsCode": "const j = $json;\n\n/* =========================\n   SYSTEM PROMPT (PL)\n   ========================= */\nconst system = `Jesteś analitykiem biznesowym w zespole **WdrażajAI Client Analysis**. \nTwoim zadaniem jest przygotować profesjonalny **Pre-Call Report** w języku polskim w formacie Markdown.\n\nRaport ma służyć konsultantowi lub handlowcowi do przygotowania się do rozmowy z potencjalnym klientem.\n\nUwzględnij w nim następujące sekcje (TYTUŁY PO POLSKU):\n1️⃣ Profil osoby\n2️⃣ Przegląd firmy\n3️⃣ Mocne strony / wyróżniki  \n4️⃣ Wyzwania / punkty bólu  \n5️⃣ Potencjalne obszary AI / automatyzacji  \n6️⃣ Rekomendowane punkty rozmowy na callu  \n7️⃣ Braki informacyjne  \n8️⃣ Skrypt 30-sekundowego otwarcia rozmowy  \n\nZawsze zachowaj logiczną strukturę i czytelny układ Markdown (nagłówki, listy punktowane, odstępy). \nNie wymyślaj danych – jeśli czegoś brakuje, wpisz to w sekcji „Braki informacyjne”.\n\nDODATKOWA ZASADA FORMATOWANIA:\n- **Nie używaj** składni linków Markdown \\`[tekst](url)\\`.\n- Gdy podajesz link (np. do profilu LinkedIn), wypisz go jako **czysty URL**, np. \\`https://linkedin.com/in/...\\`.`;\n\n/* =========================\n   WEJŚCIA – skąd bierzemy dane\n   ========================= */\n// ZAWSZE bierzemy adresy bezpośrednio z Webhooka (pewne źródło wejścia)\nconst companyUrl =\n  $('Start').first()?.json._firstItem?.company_url\n  || j.company_url\n  || $('Start').first()?.json._firstItem?.website\n  || $('Start').first()?.json._firstItem?.url\n  || '';\n\nconst linkedinUrl =\n  $('Start').first()?.json._firstItem?.linkedin_url\n  || j.linkedin_url\n  || '';\n\n// Tekst strony i dane LI bierz WYŁĄCZNIE z $json (bo Code jest po merge’u)\nlet companyTextRaw = j.company_text;\n\n// Zabezpieczenie na wypadek starszych przebiegów, gdzie company_text mógł być booleanem:\nif (typeof companyTextRaw === 'boolean') companyTextRaw = companyTextRaw ? '' : '';\n\nconst companyText =\n  (companyTextRaw && String(companyTextRaw).trim().length > 0)\n    ? String(companyTextRaw).trim().slice(0, 8000)\n    : (companyUrl\n        ? `Strona podana: ${companyUrl}. Treść strony nie została pobrana (blokada JS/CSP lub brak treści).`\n        : '_Brak danych ze strony firmowej._');\n\nconst li = j.linkedin_data || {};\n\n/* =========================\n   Heurystyki nazwy spółki / osoby do tytułu\n   ========================= */\nconst prospectName =\n  li.full_name || li.name || li.person_full_name || '';\n\nlet companyName = li.company?.name || li.company || '';\nif (!companyName && companyUrl) {\n  try {\n    const host = new URL(companyUrl).hostname.replace(/^www\\./,'');\n    companyName = host.split('.')[0].toUpperCase();\n  } catch(e) { /* zostaw pustą nazwę */ }\n}\n\nconst title = `Pre-call Report – ${companyName || companyUrl || 'Firma'}${prospectName ? ' / ' + prospectName : ''}`;\n\n/* =========================\n   LinkedIn jako ładny JSON lub info o braku\n   ========================= */\nconst linkedinInfo =\n  li && Object.keys(li).length > 0\n    ? JSON.stringify(li, null, 2)\n    : 'Brak szczegółów — profil LinkedIn nie został pobrany lub nie podano URL.';\n\n/* =========================\n   USER PROMPT – dane wejściowe do LLM\n   ========================= */\nconst user = `# ${title}\n\n---\n\n## 🔗 Dane wejściowe\n- **COMPANY_URL:** ${companyUrl || 'brak'}\n- **LINKEDIN_URL:** ${linkedinUrl || 'brak'}\n\n---\n\n## 🏢 Treść ze strony firmy\n${companyText}\n\n---\n\n## 👤 Dane z LinkedIn (JSON)\n\\`\\`\\`json\n${linkedinInfo}\n\\`\\`\\`\n\n---\n\nNa podstawie powyższych danych przygotuj kompletny raport zgodny z instrukcją w system prompt, używając dokładnie polskich tytułów sekcji.`;\n\n/* =========================\n   Zwracamy też pola do tematu e-maila\n   ========================= */\nreturn [{\n  json: {\n    system,\n    user,\n    recipient_email: j.recipient_email || '',\n    company_name: companyName || '',\n    prospect_name: prospectName || '',\n    report_title: title\n  }\n}];\n",
+          "notice": ""
+        },
+        "id": "f643ccfd-5ae0-49b8-823b-29e53c9a6c8a",
+        "name": "System Prompt",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1248,
+          240
+        ]
+      },
+      {
+        "parameters": {
+          "notice": "",
+          "promptType": "define",
+          "text": "={{ $json.user }}",
+          "hasOutputParser": false,
+          "needsFallback": false,
+          "messages": {
+            "messageValues": [
+              {
+                "type": "SystemMessagePromptTemplate",
+                "message": "={{ $json.system }}"
+              },
+              {
+                "type": "HumanMessagePromptTemplate",
+                "messageType": "text",
+                "message": "=={{$json.user}}"
+              }
+            ]
+          },
+          "batching": {}
+        },
+        "id": "6aff70a1-901f-45b3-a349-3bcd1e4ca574",
+        "name": "Tworzy Pre-call Report",
+        "type": "@n8n/n8n-nodes-langchain.chainLlm",
+        "typeVersion": 1.7,
+        "position": [
+          1648,
+          240
+        ]
+      },
+      {
+        "id": "16a04853-f98f-46e1-b7ab-4fd9174b8f18",
+        "typeVersion": 1.1,
+        "name": "Start",
+        "type": "n8n-nodes-base.executeWorkflowTrigger",
+        "position": [
+          1040,
+          240
+        ],
+        "parameters": {
+          "workflowInputs": {
+            "values": [
+              {
+                "name": "_firstItem",
+                "type": "any"
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "connections": {
+      "OpenAI Chat Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "Tworzy Pre-call Report",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "System Prompt": {
+        "main": [
+          [
+            {
+              "node": "Tworzy Pre-call Report",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Tworzy Pre-call Report": {
+        "main": [
+          [
+            {
+              "node": "Respond to Webhook",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Send a message",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Start": {
+        "main": [
+          [
+            {
+              "node": "System Prompt",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "staticData": null,
+    "meta": null,
+    "pinData": null,
+    "versionId": "4a6cfe73-49e1-4cb5-8274-1c41f8056dc0",
+    "activeVersionId": null,
+    "triggerCount": 0,
+    "shared": [
+      {
+        "updatedAt": "2025-11-05T15:00:12.920Z",
+        "createdAt": "2025-11-05T15:00:12.920Z",
+        "role": "workflow:owner",
+        "workflowId": "6hDD8ikmeV4XpdEM",
+        "projectId": "2jlhRfElT6lOiXuI"
+      }
+    ],
+    "activeVersion": null,
+    "tags": []
+  }
+}
