@@ -1,0 +1,19 @@
+{
+  "last_backup": "2026-03-01T12:43:53.764Z",
+  "n8n_instance": "https://wdrazajai.app.n8n.cloud",
+  "total_workflows": 1,
+  "by_status": {
+    "active": 1,
+    "inactive": 0,
+    "archived": 0
+  },
+  "workflows": [
+    {
+      "id": "ExsN8c9VSMc5g3q9FM2xW",
+      "name": "[PROD] WAI - SUPABASE HEARTBEAT",
+      "file": "active/prod-wai-supabase-heartbeat_ExsN8c9VSMc5g3q9FM2xW.json",
+      "status": "active",
+      "updated_at": "2026-02-25T14:22:03.821Z"
+    }
+  ]
+}
