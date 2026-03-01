@@ -1,0 +1,386 @@
+{
+  "_backup_meta": {
+    "backed_up_at": "2026-03-01T12:45:15.694Z",
+    "n8n_instance": "https://wdrazajai.app.n8n.cloud",
+    "workflow_id": "yZhRy919iluDOIrx",
+    "workflow_name": "[PROD] WAI - CLIENT FOLDER SETUP",
+    "active": true,
+    "is_archived": false
+  },
+  "workflow": {
+    "updatedAt": "2026-02-13T02:26:46.766Z",
+    "createdAt": "2026-02-12T15:53:39.512Z",
+    "id": "yZhRy919iluDOIrx",
+    "name": "[PROD] WAI - CLIENT FOLDER SETUP",
+    "active": true,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {
+          "pollTimes": {
+            "item": [
+              {
+                "mode": "everyMinute"
+              }
+            ]
+          },
+          "triggerOn": "specificFolder",
+          "folderToWatch": {
+            "__rl": true,
+            "value": "10iRRAJhlYD0OBOW9PAeHDbWt4G69NGvr",
+            "mode": "id"
+          },
+          "event": "folderCreated"
+        },
+        "id": "trigger-1",
+        "name": "Google Drive Trigger",
+        "type": "n8n-nodes-base.googleDriveTrigger",
+        "typeVersion": 1,
+        "position": [
+          0,
+          0
+        ],
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "qwiomfhqeV0LxBoG",
+            "name": "[MIKO] GOOGLE DRIVE - MAIN"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "resource": "fileFolder",
+          "filter": {
+            "driveId": {
+              "__rl": true,
+              "value": "0ANCEeYRjRPzVUk9PVA",
+              "mode": "id"
+            },
+            "folderId": {
+              "__rl": true,
+              "value": "1yV-2BMU3LDEpjZfMhhQGANZ3f3SrfH3C",
+              "mode": "id"
+            }
+          },
+          "options": {}
+        },
+        "id": "list-templates",
+        "name": "List Template Files",
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          288,
+          0
+        ],
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "qwiomfhqeV0LxBoG",
+            "name": "[MIKO] GOOGLE DRIVE - MAIN"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "id": "loop",
+        "name": "Loop Over Items",
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          528,
+          0
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "copy",
+          "fileId": {
+            "__rl": true,
+            "mode": "id",
+            "value": "={{ $json.id }}"
+          },
+          "name": "={{ $json.name.replace('[Delivery]', '[' + $('Google Drive Trigger').item.json.name + ']') }}",
+          "sameFolder": false,
+          "driveId": {
+            "__rl": true,
+            "value": "0ANCEeYRjRPzVUk9PVA",
+            "mode": "id"
+          },
+          "folderId": {
+            "__rl": true,
+            "mode": "id",
+            "value": "={{ $('Google Drive Trigger').item.json.id }}"
+          },
+          "options": {}
+        },
+        "id": "copy-rename",
+        "name": "Copy & Rename File",
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          768,
+          0
+        ],
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "qwiomfhqeV0LxBoG",
+            "name": "[MIKO] GOOGLE DRIVE - MAIN"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Google Drive Trigger": {
+        "main": [
+          [
+            {
+              "node": "List Template Files",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "List Template Files": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Loop Over Items": {
+        "main": [
+          [],
+          [
+            {
+              "node": "Copy & Rename File",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Copy & Rename File": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1",
+      "saveDataErrorExecution": "all",
+      "saveDataSuccessExecution": "all",
+      "callerPolicy": "workflowsFromSameOwner",
+      "availableInMCP": false,
+      "timeSavedMode": "fixed",
+      "errorWorkflow": "qbOSaENwdtXKQhbo",
+      "binaryMode": "separate"
+    },
+    "staticData": {
+      "node:Google Drive Trigger": {
+        "lastTimeChecked": "2026-02-27T09:08:43Z"
+      }
+    },
+    "meta": {
+      "templateCredsSetupCompleted": true
+    },
+    "pinData": {},
+    "versionId": "0f6f5879-5ba9-475c-95e4-2fa48f6e22e6",
+    "activeVersionId": "0f6f5879-5ba9-475c-95e4-2fa48f6e22e6",
+    "triggerCount": 1,
+    "shared": [
+      {
+        "updatedAt": "2026-02-13T02:25:46.906Z",
+        "createdAt": "2026-02-13T02:25:46.906Z",
+        "role": "workflow:owner",
+        "workflowId": "yZhRy919iluDOIrx",
+        "projectId": "2jlhRfElT6lOiXuI"
+      }
+    ],
+    "activeVersion": {
+      "updatedAt": "2026-02-12T16:11:12.000Z",
+      "createdAt": "2026-02-12T16:10:49.449Z",
+      "versionId": "0f6f5879-5ba9-475c-95e4-2fa48f6e22e6",
+      "workflowId": "yZhRy919iluDOIrx",
+      "nodes": [
+        {
+          "parameters": {
+            "pollTimes": {
+              "item": [
+                {
+                  "mode": "everyMinute"
+                }
+              ]
+            },
+            "triggerOn": "specificFolder",
+            "folderToWatch": {
+              "__rl": true,
+              "value": "10iRRAJhlYD0OBOW9PAeHDbWt4G69NGvr",
+              "mode": "id"
+            },
+            "event": "folderCreated"
+          },
+          "id": "trigger-1",
+          "name": "Google Drive Trigger",
+          "type": "n8n-nodes-base.googleDriveTrigger",
+          "typeVersion": 1,
+          "position": [
+            0,
+            0
+          ],
+          "credentials": {
+            "googleDriveOAuth2Api": {
+              "id": "qwiomfhqeV0LxBoG",
+              "name": "[MIKO] GOOGLE DRIVE - MAIN"
+            }
+          }
+        },
+        {
+          "parameters": {
+            "resource": "fileFolder",
+            "filter": {
+              "driveId": {
+                "__rl": true,
+                "value": "0ANCEeYRjRPzVUk9PVA",
+                "mode": "id"
+              },
+              "folderId": {
+                "__rl": true,
+                "value": "1yV-2BMU3LDEpjZfMhhQGANZ3f3SrfH3C",
+                "mode": "id"
+              }
+            },
+            "options": {}
+          },
+          "id": "list-templates",
+          "name": "List Template Files",
+          "type": "n8n-nodes-base.googleDrive",
+          "typeVersion": 3,
+          "position": [
+            288,
+            0
+          ],
+          "credentials": {
+            "googleDriveOAuth2Api": {
+              "id": "qwiomfhqeV0LxBoG",
+              "name": "[MIKO] GOOGLE DRIVE - MAIN"
+            }
+          }
+        },
+        {
+          "parameters": {
+            "options": {}
+          },
+          "id": "loop",
+          "name": "Loop Over Items",
+          "type": "n8n-nodes-base.splitInBatches",
+          "typeVersion": 3,
+          "position": [
+            528,
+            0
+          ]
+        },
+        {
+          "parameters": {
+            "operation": "copy",
+            "fileId": {
+              "__rl": true,
+              "mode": "id",
+              "value": "={{ $json.id }}"
+            },
+            "name": "={{ $json.name.replace('[Delivery]', '[' + $('Google Drive Trigger').item.json.name + ']') }}",
+            "sameFolder": false,
+            "driveId": {
+              "__rl": true,
+              "value": "0ANCEeYRjRPzVUk9PVA",
+              "mode": "id"
+            },
+            "folderId": {
+              "__rl": true,
+              "mode": "id",
+              "value": "={{ $('Google Drive Trigger').item.json.id }}"
+            },
+            "options": {}
+          },
+          "id": "copy-rename",
+          "name": "Copy & Rename File",
+          "type": "n8n-nodes-base.googleDrive",
+          "typeVersion": 3,
+          "position": [
+            768,
+            0
+          ],
+          "credentials": {
+            "googleDriveOAuth2Api": {
+              "id": "qwiomfhqeV0LxBoG",
+              "name": "[MIKO] GOOGLE DRIVE - MAIN"
+            }
+          }
+        }
+      ],
+      "connections": {
+        "Google Drive Trigger": {
+          "main": [
+            [
+              {
+                "node": "List Template Files",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "List Template Files": {
+          "main": [
+            [
+              {
+                "node": "Loop Over Items",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Loop Over Items": {
+          "main": [
+            [],
+            [
+              {
+                "node": "Copy & Rename File",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Copy & Rename File": {
+          "main": [
+            [
+              {
+                "node": "Loop Over Items",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        }
+      },
+      "authors": "Wdrazaj AI",
+      "name": "Version 0f6f5879",
+      "description": "",
+      "autosaved": true
+    },
+    "tags": []
+  }
+}
