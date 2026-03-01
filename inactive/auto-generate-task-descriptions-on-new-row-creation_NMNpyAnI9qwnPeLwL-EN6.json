@@ -1,0 +1,264 @@
+{
+  "_backup_meta": {
+    "backed_up_at": "2026-03-01T12:45:15.661Z",
+    "n8n_instance": "https://wdrazajai.app.n8n.cloud",
+    "workflow_id": "NMNpyAnI9qwnPeLwL-EN6",
+    "workflow_name": "Auto-generate task descriptions on new row creation",
+    "active": false,
+    "is_archived": false
+  },
+  "workflow": {
+    "updatedAt": "2026-02-17T09:48:18.822Z",
+    "createdAt": "2026-02-17T09:45:09.735Z",
+    "id": "NMNpyAnI9qwnPeLwL-EN6",
+    "name": "Auto-generate task descriptions on new row creation",
+    "active": false,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {
+          "pollTimes": {
+            "item": [
+              {
+                "mode": "everyMinute"
+              }
+            ]
+          },
+          "documentId": {
+            "__rl": true,
+            "mode": "list",
+            "value": ""
+          },
+          "sheetName": {
+            "__rl": true,
+            "mode": "list",
+            "value": ""
+          },
+          "event": "rowUpdate",
+          "options": {}
+        },
+        "id": "f36c8967-576d-4368-946d-c8652886def0",
+        "name": "On Row Update",
+        "type": "n8n-nodes-base.googleSheetsTrigger",
+        "typeVersion": 1,
+        "position": [
+          256,
+          632
+        ]
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "id-1",
+                "name": "Status",
+                "value": "new",
+                "type": "string"
+              },
+              {
+                "id": "id-2",
+                "name": "Task",
+                "value": "={{ $json.Task }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "c844516c-cf0c-499e-a937-cf9407e871d0",
+        "name": "Workflow Configuration",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          480,
+          632
+        ]
+      },
+      {
+        "parameters": {
+          "model": {
+            "__rl": true,
+            "mode": "list",
+            "value": "gpt-5-mini"
+          },
+          "options": {}
+        },
+        "id": "4fe88999-55e1-4aeb-8cc9-88eae1c1522d",
+        "name": "OpenAI Chat Model",
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+        "typeVersion": 1.3,
+        "position": [
+          776,
+          856
+        ],
+        "credentials": {
+          "openAiApi": {
+            "id": "0PmreRG9VqAnmyU6",
+            "name": "[WAI] OPENAI - MAIN"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "=Task: {{ $('Workflow Configuration').item.json.Task }}",
+          "options": {
+            "systemMessage": "You are a helpful assistant that generates concise task descriptions. Based on the task name provided, create a brief, clear description (1-2 sentences) explaining what this task involves."
+          }
+        },
+        "id": "90882816-d4bd-4c4a-851c-678fc3f50eb7",
+        "name": "Generate Task Description",
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 3.1,
+        "position": [
+          704,
+          632
+        ]
+      },
+      {
+        "parameters": {},
+        "id": "4da4c071-e687-48d5-94a2-a08da655bf21",
+        "name": "Prepare Sheet Update",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          256,
+          304
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "update"
+        },
+        "id": "30899347-0644-46a7-8a84-f1eeae296db5",
+        "name": "Update Sheet Row",
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.7,
+        "position": [
+          1280,
+          632
+        ]
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "id-1",
+                "name": "Status",
+                "value": "new",
+                "type": "string"
+              },
+              {
+                "id": "id-2",
+                "name": "Message",
+                "value": "={{ $('Generate Task Description').item.json.output }}",
+                "type": "string"
+              },
+              {
+                "id": "id-3",
+                "name": "Task",
+                "value": "={{ $('Workflow Configuration').item.json.Task }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "4a9b938a-e697-4fdd-8e74-91e0d6e39b8a",
+        "name": "Prepare Sheet Update Data",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          1056,
+          632
+        ]
+      }
+    ],
+    "connections": {
+      "On Row Update": {
+        "main": [
+          [
+            {
+              "node": "Workflow Configuration",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Workflow Configuration": {
+        "main": [
+          [
+            {
+              "node": "Generate Task Description",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenAI Chat Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "Generate Task Description",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Update Sheet Row": {
+        "main": [
+          []
+        ]
+      },
+      "Generate Task Description": {
+        "main": [
+          [
+            {
+              "node": "Prepare Sheet Update Data",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Prepare Sheet Update Data": {
+        "main": [
+          [
+            {
+              "node": "Update Sheet Row",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1",
+      "binaryMode": "separate",
+      "availableInMCP": false
+    },
+    "staticData": null,
+    "meta": null,
+    "pinData": {},
+    "versionId": "73c634bf-d451-4980-9f9e-10628effb250",
+    "activeVersionId": null,
+    "triggerCount": 0,
+    "shared": [
+      {
+        "updatedAt": "2026-02-17T09:45:09.740Z",
+        "createdAt": "2026-02-17T09:45:09.740Z",
+        "role": "workflow:owner",
+        "workflowId": "NMNpyAnI9qwnPeLwL-EN6",
+        "projectId": "o1WWPwmeHKhHFopU"
+      }
+    ],
+    "activeVersion": null,
+    "tags": []
+  }
+}
