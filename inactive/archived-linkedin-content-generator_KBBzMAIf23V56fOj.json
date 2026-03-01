@@ -1,0 +1,545 @@
+{
+  "_backup_meta": {
+    "backed_up_at": "2026-03-01T12:45:15.656Z",
+    "n8n_instance": "https://wdrazajai.app.n8n.cloud",
+    "workflow_id": "KBBzMAIf23V56fOj",
+    "workflow_name": "[ARCHIVED] LinkedIn Content Generator",
+    "active": false,
+    "is_archived": false
+  },
+  "workflow": {
+    "updatedAt": "2026-02-28T16:59:20.954Z",
+    "createdAt": "2026-02-12T16:52:09.555Z",
+    "id": "KBBzMAIf23V56fOj",
+    "name": "[ARCHIVED] LinkedIn Content Generator",
+    "active": false,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "field": "weeks",
+                "triggerAtHour": 20
+              }
+            ]
+          }
+        },
+        "id": "schedule_trigger",
+        "name": "Schedule Trigger",
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          0,
+          -16
+        ]
+      },
+      {
+        "parameters": {
+          "url": "https://www.theverge.com/rss/ai-artificial-intelligence/index.xml",
+          "options": {}
+        },
+        "id": "rss_1",
+        "name": "1a. RSS - The Verge AI",
+        "type": "n8n-nodes-base.rssFeedRead",
+        "typeVersion": 1,
+        "position": [
+          224,
+          -304
+        ]
+      },
+      {
+        "parameters": {
+          "url": "https://www.technologyreview.com/topic/artificial-intelligence/feed",
+          "options": {}
+        },
+        "id": "rss_2",
+        "name": "1b. RSS - MIT Tech Review",
+        "type": "n8n-nodes-base.rssFeedRead",
+        "typeVersion": 1,
+        "position": [
+          224,
+          -112
+        ]
+      },
+      {
+        "parameters": {
+          "url": "https://techcrunch.com/category/artificial-intelligence/feed/",
+          "options": {}
+        },
+        "id": "rss_3",
+        "name": "1c. RSS - TechCrunch AI",
+        "type": "n8n-nodes-base.rssFeedRead",
+        "typeVersion": 1,
+        "position": [
+          224,
+          80
+        ]
+      },
+      {
+        "parameters": {
+          "url": "https://blog.n8n.io/rss/",
+          "options": {}
+        },
+        "id": "rss_4",
+        "name": "1d. RSS - n8n Blog",
+        "type": "n8n-nodes-base.rssFeedRead",
+        "typeVersion": 1,
+        "position": [
+          224,
+          272
+        ]
+      },
+      {
+        "parameters": {},
+        "id": "merge_a",
+        "name": "2a. Merge RSS Pair 1",
+        "type": "n8n-nodes-base.merge",
+        "typeVersion": 3,
+        "position": [
+          448,
+          -208
+        ]
+      },
+      {
+        "parameters": {},
+        "id": "merge_b",
+        "name": "2b. Merge RSS Pair 2",
+        "type": "n8n-nodes-base.merge",
+        "typeVersion": 3,
+        "position": [
+          448,
+          176
+        ]
+      },
+      {
+        "parameters": {},
+        "id": "merge_c",
+        "name": "3. Merge All RSS",
+        "type": "n8n-nodes-base.merge",
+        "typeVersion": 3,
+        "position": [
+          672,
+          -16
+        ]
+      },
+      {
+        "parameters": {
+          "jsCode": "const items = $input.all();\nconst sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);\n\nconst articles = items.map(item => ({\n  title: item.json.title || '',\n  summary: (item.json.contentSnippet || item.json.description || item.json.content || '').substring(0, 300),\n  link: item.json.link || '',\n  pubDate: item.json.pubDate || item.json.isoDate || new Date().toISOString()\n})).filter(a => {\n  try {\n    return new Date(a.pubDate) >= sevenDaysAgo;\n  } catch { return true; }\n});\n\nconst seen = new Set();\nconst unique = articles.filter(a => {\n  const key = a.title.toLowerCase().replace(/[^a-z0-9]/g, '').substring(0, 50);\n  if (seen.has(key) || !a.title) return false;\n  seen.add(key);\n  return true;\n});\n\nunique.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));\n\nreturn [{\n  json: {\n    articles: unique.slice(0, 15),\n    totalFound: unique.length,\n    fetchedAt: new Date().toISOString()\n  }\n}];"
+        },
+        "id": "deduplicate",
+        "name": "4. Deduplicate & Rank Topics",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          896,
+          -16
+        ]
+      },
+      {
+        "parameters": {
+          "documentId": {
+            "__rl": true,
+            "mode": "url",
+            "value": "={{ $env.LINKEDIN_SHEET_URL }}"
+          },
+          "sheetName": {
+            "__rl": true,
+            "mode": "name",
+            "value": "Posts"
+          },
+          "options": {}
+        },
+        "id": "read_previous_posts",
+        "name": "5. Get Previous Posts",
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.5,
+        "position": [
+          1120,
+          -16
+        ],
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "cGJ5fju0HEKfZT5V",
+            "name": "[WAI] SHEETS - MAIN"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "const rssData = $('4. Deduplicate & Rank Topics').first().json;\nconst previousPosts = $('5. Get Previous Posts').all();\n\nconst fourWeeksAgo = new Date(Date.now() - 28 * 24 * 60 * 60 * 1000);\nconst recentTopics = previousPosts\n  .filter(p => {\n    try { return new Date(p.json.generated_at) >= fourWeeksAgo; }\n    catch { return false; }\n  })\n  .map(p => (p.json.topic || '').toLowerCase());\n\nconst freshArticles = rssData.articles.filter(a => {\n  const titleLower = a.title.toLowerCase();\n  return !recentTopics.some(t => t && titleLower.includes(t.substring(0, 20)));\n});\n\nconst now = new Date();\nconst startOfYear = new Date(now.getFullYear(), 0, 1);\nconst weekNumber = Math.ceil(((now - startOfYear) / 86400000 + startOfYear.getDay() + 1) / 7);\n\nconst getNextWeekday = (dayOfWeek, baseDate) => {\n  const d = new Date(baseDate);\n  d.setDate(d.getDate() + ((dayOfWeek + 7 - d.getDay()) % 7 || 7));\n  return d.toISOString().split('T')[0];\n};\n\nconst scheduledDates = [\n  getNextWeekday(2, now),\n  getNextWeekday(3, now),\n  getNextWeekday(4, now)\n];\n\nconst formats = ['tip', 'story', 'opinion', 'hot_take', 'listicle'];\nconst recentFormats = previousPosts.slice(-6).map(p => p.json.post_format || '');\nconst availableFormats = formats.filter(f => !recentFormats.slice(-2).includes(f));\nconst selectedFormats = [\n  availableFormats[0] || 'tip',\n  availableFormats[1] || 'story',\n  availableFormats[2] || 'opinion'\n];\n\nreturn [{\n  json: {\n    trendingTopics: freshArticles.slice(0, 10),\n    scheduledDates,\n    weekNumber,\n    year: now.getFullYear(),\n    selectedFormats,\n    hasTopics: freshArticles.length > 0\n  }\n}];"
+        },
+        "id": "prepare_prompt",
+        "name": "6. Prepare AI Prompt",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1344,
+          -16
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "version": 2,
+              "leftValue": "",
+              "caseSensitive": true,
+              "typeValidation": "strict"
+            },
+            "combinator": "and",
+            "conditions": [
+              {
+                "id": "has_topics_cond",
+                "operator": {
+                  "type": "boolean",
+                  "operation": "true",
+                  "singleValue": true
+                },
+                "leftValue": "={{ $json.hasTopics }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "has_topics",
+        "name": "7. Has Topics?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          1568,
+          -16
+        ]
+      },
+      {
+        "parameters": {
+          "sendTo": "={{ $env.NOTIFICATION_EMAIL }}",
+          "subject": "LinkedIn Automation: No fresh topics found this week",
+          "message": "=<h2>No Fresh Topics Found</h2><p>The LinkedIn content generator could not find enough fresh AI/automation topics from RSS feeds this week.</p><p>You may want to manually add topics to the Google Sheets content calendar.</p><p><a href=\"{{ $env.LINKEDIN_SHEET_URL }}\">Open Content Calendar</a></p>",
+          "options": {}
+        },
+        "id": "no_topics_alert",
+        "name": "No Topics Alert",
+        "type": "n8n-nodes-base.gmail",
+        "typeVersion": 2.1,
+        "position": [
+          1856,
+          80
+        ],
+        "webhookId": "6b1934d0-558b-4862-bf1f-93ec1e4c45dc"
+      },
+      {
+        "parameters": {
+          "modelId": {
+            "__rl": true,
+            "mode": "id",
+            "value": "gpt-4o"
+          },
+          "messages": {
+            "values": [
+              {
+                "content": "=Generate 3 LinkedIn posts for this week based on these trending AI/automation topics:\n\n{{ JSON.stringify($json.trendingTopics.slice(0, 8), null, 2) }}\n\nPost formats to use: {{ $json.selectedFormats.join(', ') }}\nScheduled dates: {{ $json.scheduledDates.join(', ') }}\n\nRemember:\n- Each post should cover a DIFFERENT topic\n- Vary the tone: one educational, one opinionated, one practical\n- No links in the post body\n- 800-1800 characters per post\n- Return ONLY a JSON array with 3 objects, each having: topic, format, content, hashtags"
+              }
+            ]
+          },
+          "options": {
+            "maxTokens": 4000,
+            "temperature": 0.8
+          }
+        },
+        "id": "generate_posts",
+        "name": "8. Generate LinkedIn Posts",
+        "type": "@n8n/n8n-nodes-langchain.openAi",
+        "typeVersion": 1.8,
+        "position": [
+          1792,
+          -112
+        ]
+      },
+      {
+        "parameters": {
+          "jsCode": "const aiResponse = $input.first().json;\nconst promptData = $('6. Prepare AI Prompt').first().json;\n\nlet posts;\ntry {\n  const text = aiResponse.text || aiResponse.content || aiResponse.message || JSON.stringify(aiResponse);\n  const jsonMatch = text.match(/\\[[\\s\\S]*\\]/);\n  if (jsonMatch) {\n    posts = JSON.parse(jsonMatch[0]);\n  } else {\n    const parsed = JSON.parse(text);\n    posts = Array.isArray(parsed) ? parsed : parsed.posts || [];\n  }\n} catch (err) {\n  throw new Error('Failed to parse AI response: ' + err.message);\n}\n\nif (!Array.isArray(posts) || posts.length === 0) {\n  throw new Error('AI returned no valid posts');\n}\n\nconst now = new Date();\nconst year = promptData.year;\nconst week = promptData.weekNumber;\n\nreturn posts.slice(0, 3).map((post, index) => ({\n  json: {\n    id: 'LI-' + year + '-W' + String(week).padStart(2, '0') + '-' + (index + 1),\n    status: 'draft',\n    week_number: week,\n    scheduled_date: promptData.scheduledDates[index] || '',\n    topic: post.topic || 'AI/Automation',\n    post_format: post.format || promptData.selectedFormats[index] || 'tip',\n    post_content: post.content || '',\n    hashtags: post.hashtags || '#AI #Automation #Tech',\n    char_count: (post.content || '').length,\n    source_url: (promptData.trendingTopics[index] || {}).link || '',\n    generated_at: now.toISOString(),\n    published_at: '',\n    linkedin_post_id: '',\n    error_message: '',\n    notes: ''\n  }\n}));"
+        },
+        "id": "parse_ai_response",
+        "name": "9. Parse AI Response",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          2144,
+          -112
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "append",
+          "documentId": {
+            "__rl": true,
+            "mode": "url",
+            "value": "={{ $env.LINKEDIN_SHEET_URL }}"
+          },
+          "sheetName": {
+            "__rl": true,
+            "mode": "name",
+            "value": "Posts"
+          },
+          "columns": {
+            "mappingMode": "autoMapInputData",
+            "value": {},
+            "matchingColumns": [],
+            "schema": [],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "id": "save_drafts",
+        "name": "10. Save Drafts to Sheets",
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.5,
+        "position": [
+          2368,
+          -112
+        ],
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "cGJ5fju0HEKfZT5V",
+            "name": "[WAI] SHEETS - MAIN"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "sendTo": "={{ $env.NOTIFICATION_EMAIL }}",
+          "subject": "=LinkedIn Drafts Ready for Review - Week {{ $('6. Prepare AI Prompt').first().json.weekNumber }}",
+          "message": "=<h2>3 New LinkedIn Post Drafts Ready!</h2><p>Your weekly LinkedIn drafts have been generated. Please review, edit, and approve them in Google Sheets.</p><h3>Quick Preview:</h3>{{ $input.all().map((item, i) => '<div style=\"border:1px solid #ddd;padding:12px;margin:8px 0;border-radius:8px;\"><strong>Post ' + (i+1) + ': ' + item.json.topic + '</strong> (' + item.json.post_format + ')<br><em>Scheduled: ' + item.json.scheduled_date + '</em><br><pre style=\"white-space:pre-wrap;font-size:13px;\">' + (item.json.post_content || '').substring(0, 300) + '...</pre></div>').join('') }}<p><strong>To approve:</strong> Open the spreadsheet and change the status column from draft to approved.</p><p><a href=\"{{ $env.LINKEDIN_SHEET_URL }}\" style=\"background:#0077B5;color:white;padding:10px 20px;text-decoration:none;border-radius:5px;\">Open Content Calendar</a></p>",
+          "options": {}
+        },
+        "id": "send_review_email",
+        "name": "11. Send Review Email",
+        "type": "n8n-nodes-base.gmail",
+        "typeVersion": 2.1,
+        "position": [
+          2592,
+          -112
+        ],
+        "webhookId": "18180de3-ae05-4e3a-9a5d-472465f87f3d"
+      }
+    ],
+    "connections": {
+      "Schedule Trigger": {
+        "main": [
+          [
+            {
+              "node": "1a. RSS - The Verge AI",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "1b. RSS - MIT Tech Review",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "1c. RSS - TechCrunch AI",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "1d. RSS - n8n Blog",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "1a. RSS - The Verge AI": {
+        "main": [
+          [
+            {
+              "node": "2a. Merge RSS Pair 1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "1b. RSS - MIT Tech Review": {
+        "main": [
+          [
+            {
+              "node": "2a. Merge RSS Pair 1",
+              "type": "main",
+              "index": 1
+            }
+          ]
+        ]
+      },
+      "1c. RSS - TechCrunch AI": {
+        "main": [
+          [
+            {
+              "node": "2b. Merge RSS Pair 2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "1d. RSS - n8n Blog": {
+        "main": [
+          [
+            {
+              "node": "2b. Merge RSS Pair 2",
+              "type": "main",
+              "index": 1
+            }
+          ]
+        ]
+      },
+      "2a. Merge RSS Pair 1": {
+        "main": [
+          [
+            {
+              "node": "3. Merge All RSS",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "2b. Merge RSS Pair 2": {
+        "main": [
+          [
+            {
+              "node": "3. Merge All RSS",
+              "type": "main",
+              "index": 1
+            }
+          ]
+        ]
+      },
+      "3. Merge All RSS": {
+        "main": [
+          [
+            {
+              "node": "4. Deduplicate & Rank Topics",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "4. Deduplicate & Rank Topics": {
+        "main": [
+          [
+            {
+              "node": "5. Get Previous Posts",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "5. Get Previous Posts": {
+        "main": [
+          [
+            {
+              "node": "6. Prepare AI Prompt",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "6. Prepare AI Prompt": {
+        "main": [
+          [
+            {
+              "node": "7. Has Topics?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "7. Has Topics?": {
+        "main": [
+          [
+            {
+              "node": "8. Generate LinkedIn Posts",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "No Topics Alert",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "8. Generate LinkedIn Posts": {
+        "main": [
+          [
+            {
+              "node": "9. Parse AI Response",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "9. Parse AI Response": {
+        "main": [
+          [
+            {
+              "node": "10. Save Drafts to Sheets",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "10. Save Drafts to Sheets": {
+        "main": [
+          [
+            {
+              "node": "11. Send Review Email",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1",
+      "timezone": "Europe/Warsaw",
+      "saveDataErrorExecution": "all",
+      "saveDataSuccessExecution": "all",
+      "saveManualExecutions": true,
+      "callerPolicy": "workflowsFromSameOwner",
+      "availableInMCP": false
+    },
+    "staticData": null,
+    "meta": null,
+    "pinData": {},
+    "versionId": "4b4ff9ee-a822-4cb1-9793-3dc66699dde4",
+    "activeVersionId": null,
+    "triggerCount": 0,
+    "shared": [
+      {
+        "updatedAt": "2026-02-14T07:51:11.315Z",
+        "createdAt": "2026-02-14T07:51:11.315Z",
+        "role": "workflow:owner",
+        "workflowId": "KBBzMAIf23V56fOj",
+        "projectId": "2jlhRfElT6lOiXuI"
+      }
+    ],
+    "activeVersion": null,
+    "tags": []
+  }
+}
