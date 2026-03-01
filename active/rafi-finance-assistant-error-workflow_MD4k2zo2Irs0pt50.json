@@ -1,0 +1,147 @@
+{
+  "_backup_meta": {
+    "backed_up_at": "2026-03-01T12:45:15.657Z",
+    "n8n_instance": "https://wdrazajai.app.n8n.cloud",
+    "workflow_id": "MD4k2zo2Irs0pt50",
+    "workflow_name": "Rafi: Finance assistant: Error Workflow",
+    "active": true,
+    "is_archived": false
+  },
+  "workflow": {
+    "updatedAt": "2026-01-12T12:54:38.179Z",
+    "createdAt": "2025-11-03T17:57:08.999Z",
+    "id": "MD4k2zo2Irs0pt50",
+    "name": "Rafi: Finance assistant: Error Workflow",
+    "active": true,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.errorTrigger",
+        "typeVersion": 1,
+        "position": [
+          -256,
+          -128
+        ],
+        "id": "42a3ec28-c900-4d3b-88b2-4e36f6b55645",
+        "name": "Error Trigger"
+      },
+      {
+        "parameters": {
+          "chatId": "697161418",
+          "text": "=🚨 Krytyczny błąd w: {{ $json.workflow.name }}\n\n{{ $json.execution.error.message }}",
+          "additionalFields": {
+            "appendAttribution": false
+          }
+        },
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          -48,
+          -128
+        ],
+        "id": "e906e28f-740d-42e3-a082-5bf769c9970c",
+        "name": "Send a text message",
+        "webhookId": "158c359a-334e-40b1-818d-9bacbf0356bc",
+        "credentials": {
+          "telegramApi": {
+            "id": "CR1249lBwedCpyAP",
+            "name": "Rafi: finance assistant"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Error Trigger": {
+        "main": [
+          [
+            {
+              "node": "Send a text message",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "staticData": null,
+    "meta": null,
+    "pinData": {},
+    "versionId": "d35c44e9-6158-46e1-8153-6a77cb45d694",
+    "activeVersionId": "8f1bc675-348a-4a86-be73-82689f6f3cd5",
+    "triggerCount": 0,
+    "shared": [
+      {
+        "updatedAt": "2025-11-03T17:57:09.003Z",
+        "createdAt": "2025-11-03T17:57:09.003Z",
+        "role": "workflow:owner",
+        "workflowId": "MD4k2zo2Irs0pt50",
+        "projectId": "2jlhRfElT6lOiXuI"
+      }
+    ],
+    "activeVersion": {
+      "updatedAt": "2025-11-27T19:27:15.707Z",
+      "createdAt": "2025-11-27T19:27:15.707Z",
+      "versionId": "8f1bc675-348a-4a86-be73-82689f6f3cd5",
+      "workflowId": "MD4k2zo2Irs0pt50",
+      "nodes": [
+        {
+          "parameters": {},
+          "type": "n8n-nodes-base.errorTrigger",
+          "typeVersion": 1,
+          "position": [
+            -256,
+            -128
+          ],
+          "id": "42a3ec28-c900-4d3b-88b2-4e36f6b55645",
+          "name": "Error Trigger"
+        },
+        {
+          "parameters": {
+            "chatId": "1106720545",
+            "text": "=🚨 Krytyczny błąd w: {{ $json.workflow.name }}\n\n{{ $json.execution.error.message }}",
+            "additionalFields": {
+              "appendAttribution": false
+            }
+          },
+          "type": "n8n-nodes-base.telegram",
+          "typeVersion": 1.2,
+          "position": [
+            -48,
+            -128
+          ],
+          "id": "e906e28f-740d-42e3-a082-5bf769c9970c",
+          "name": "Send a text message",
+          "webhookId": "158c359a-334e-40b1-818d-9bacbf0356bc",
+          "credentials": {
+            "telegramApi": {
+              "id": "8m5QJWFY8dNpF0ml",
+              "name": "MIWOJ: finance assistant"
+            }
+          }
+        }
+      ],
+      "connections": {
+        "Error Trigger": {
+          "main": [
+            [
+              {
+                "node": "Send a text message",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        }
+      },
+      "authors": "system migration",
+      "name": null,
+      "description": null,
+      "autosaved": false
+    },
+    "tags": []
+  }
+}
