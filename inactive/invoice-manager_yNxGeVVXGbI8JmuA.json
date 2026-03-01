@@ -1,0 +1,706 @@
+{
+  "_backup_meta": {
+    "backed_up_at": "2026-03-01T12:45:15.693Z",
+    "n8n_instance": "https://wdrazajai.app.n8n.cloud",
+    "workflow_id": "yNxGeVVXGbI8JmuA",
+    "workflow_name": "Invoice_manager",
+    "active": false,
+    "is_archived": false
+  },
+  "workflow": {
+    "updatedAt": "2026-01-08T10:40:05.119Z",
+    "createdAt": "2025-12-24T13:15:55.184Z",
+    "id": "yNxGeVVXGbI8JmuA",
+    "name": "Invoice_manager",
+    "active": false,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {
+          "pollTimes": {
+            "item": [
+              {
+                "mode": "everyMinute"
+              }
+            ]
+          },
+          "triggerOn": "specificFolder",
+          "folderToWatch": {
+            "__rl": true,
+            "value": "https://drive.google.com/drive/u/0/folders/177z5qSq1D_o0Ab7QK5mM19wzqHPoBxq4",
+            "mode": "url"
+          },
+          "event": "fileCreated",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleDriveTrigger",
+        "typeVersion": 1,
+        "position": [
+          0,
+          0
+        ],
+        "id": "a8621a1c-8673-493d-9a53-0bc3894960ac",
+        "name": "Google Drive Trigger",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "TzGbHKnjytdXTibB",
+            "name": "WDRAZAJ_AI_CREDENTIALS"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "download",
+          "fileId": {
+            "__rl": true,
+            "value": "={{ $json.id }}",
+            "mode": "id"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          208,
+          0
+        ],
+        "id": "6b49161a-ce89-4683-8e1d-6faa58200572",
+        "name": "Download file",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "TzGbHKnjytdXTibB",
+            "name": "WDRAZAJ_AI_CREDENTIALS"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "rules": {
+            "values": [
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 3
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $('Google Drive Trigger').item.json.fullFileExtension }}",
+                      "rightValue": "pdf",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      },
+                      "id": "2f94300a-73d3-426a-883b-135d119cd1b2"
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "PDF"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 3
+                  },
+                  "conditions": [
+                    {
+                      "id": "775b1bb0-94df-41d4-a628-d90b02edb627",
+                      "leftValue": "={{ $('Google Drive Trigger').item.json.fullFileExtension }}",
+                      "rightValue": "jpg",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "JPG"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 3
+                  },
+                  "conditions": [
+                    {
+                      "id": "a4c2dab0-ca0c-40df-b05d-23e6e9dd6f1c",
+                      "leftValue": "={{ $('Google Drive Trigger').item.json.fullFileExtension }}",
+                      "rightValue": "png",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "PNG"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3.4,
+        "position": [
+          624,
+          -32
+        ],
+        "id": "050008f0-6b3d-46ec-b729-00bfea6691b3",
+        "name": "Switch"
+      },
+      {
+        "parameters": {
+          "operation": "binaryToPropery",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.extractFromFile",
+        "typeVersion": 1.1,
+        "position": [
+          416,
+          -48
+        ],
+        "id": "568c512a-f02d-422f-8bb8-5986a08a0d5b",
+        "name": "Extract from File"
+      },
+      {
+        "parameters": {
+          "text": "={{ $json.extracted_text_pdf ?? $json.extracted_text_image }}",
+          "schemaType": "manual",
+          "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"date\": {\n      \"type\": \"string\",\n      \"description\": \"Extract the transaction date from the receipt.\"\n    },\n    \"receiptId\": {\n      \"type\": \"string\",\n      \"description\": \"Extract the receipt number, invoice number, or transaction ID.\"\n    },\n    \"vendor\": {\n      \"type\": \"string\",\n      \"description\": \"Extract the business name or merchant name from the receipt.\"\n    },\n    \"category\": {\n      \"type\": \"string\",\n      \"description\": \"Classify the expense into one of the predefined categories.\"\n    },\n    \"expenseType\": {\n      \"type\": \"string\",\n      \"description\": \"Extract or infer a more specific type of expense.\"\n    },\n    \"description\": {\n      \"type\": \"string\",\n      \"description\": \"Provide a detailed description of the items purchased.\"\n    },\n    \"amount\": {\n      \"type\": \"number\",\n      \"description\": \"Extract the subtotal or pre-tax amount from the receipt.\"\n    },\n    \"gstHst\": {\n      \"type\": \"number\",\n      \"description\": \"Extract the GST or HST amount paid.\"\n    },\n    \"pst\": {\n      \"type\": \"number\",\n      \"description\": \"Extract the PST amount. Only applicable in applicable provinces.\"\n    },\n    \"totalTax\": {\n      \"type\": \"number\",\n      \"description\": \"Extract or calculate total taxes paid (GST/HST + PST).\"\n    },\n    \"paymentMethod\": {\n      \"type\": \"string\",\n      \"description\": \"Identify payment method.\"\n    },\n    \"receiptLocation\": {\n      \"type\": \"string\",\n      \"description\": \"Auto-populated by workflow. Return empty string if not present.\"\n    },\n    \"status\": {\n      \"type\": \"string\",\n      \"description\": \"Always return 'Processed' for automated OCR extraction.\"\n    },\n    \"notes\": {\n      \"type\": \"string\",\n      \"description\": \"Extract additional business purpose information if available.\"\n    },\n    \"processedDate\": {\n      \"type\": \"string\",\n      \"description\": \"Auto-populated by workflow with current date.\"\n    },\n    \"craLineItem\": {\n      \"type\": \"string\",\n      \"description\": \"Return corresponding CRA T2125 line item based on category.\"\n    }\n  },\n  \"required\": [\n    \"date\",\n    \"vendor\",\n    \"category\",\n    \"amount\"\n  ]\n}\n",
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.informationExtractor",
+        "typeVersion": 1.2,
+        "position": [
+          1488,
+          0
+        ],
+        "id": "36c1ac6a-4f58-430a-8cca-8e40225c5cf5",
+        "name": "Information Extractor"
+      },
+      {
+        "parameters": {
+          "model": {
+            "__rl": true,
+            "mode": "list",
+            "value": "gpt-4.1-mini"
+          },
+          "builtInTools": {},
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+        "typeVersion": 1.3,
+        "position": [
+          1408,
+          192
+        ],
+        "id": "c7f82afc-fd32-4393-9828-ffd63d7b9c93",
+        "name": "OpenAI Chat Model",
+        "credentials": {
+          "openAiApi": {
+            "id": "0PmreRG9VqAnmyU6",
+            "name": "WdrazajAI"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "append",
+          "documentId": {
+            "__rl": true,
+            "value": "1mDm3yHvLNArart9OLuI4DBJZNZ6Qk6XQrL-ituYP_E8",
+            "mode": "list",
+            "cachedResultName": "Faktury",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1mDm3yHvLNArart9OLuI4DBJZNZ6Qk6XQrL-ituYP_E8/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": "gid=0",
+            "mode": "list",
+            "cachedResultName": "Arkusz1",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1mDm3yHvLNArart9OLuI4DBJZNZ6Qk6XQrL-ituYP_E8/edit#gid=0"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "Date": "={{ $json.output.date }}",
+              "ReceiptId": "={{ $json.output.receiptId }}",
+              "Vendor": "={{ $json.output.vendor }}",
+              "Category": "={{ $json.output.category }}",
+              "Expense type": "={{ $json.output.expenseType }}",
+              "Description": "={{ $json.output.description }}",
+              "Amount": "={{ $json.output.amount }}",
+              "Total tax": "={{ $json.output.totalTax }}",
+              "Payment method": "={{ $json.output.paymentMethod }}",
+              "Status": "={{ $json.output.status }}",
+              "Invoice location": "={{ $('Google Drive Trigger').item.json.webViewLink }}"
+            },
+            "matchingColumns": [],
+            "schema": [
+              {
+                "id": "Date",
+                "displayName": "Date",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "ReceiptId",
+                "displayName": "ReceiptId",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Vendor",
+                "displayName": "Vendor",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Category",
+                "displayName": "Category",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Expense type",
+                "displayName": "Expense type",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Description",
+                "displayName": "Description",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Amount",
+                "displayName": "Amount",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Total tax",
+                "displayName": "Total tax",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Payment method",
+                "displayName": "Payment method",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Status",
+                "displayName": "Status",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Invoice location",
+                "displayName": "Invoice location",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.7,
+        "position": [
+          1824,
+          -16
+        ],
+        "id": "49075456-3a71-46e0-a5db-bd7f2fcc06d5",
+        "name": "Append row in sheet",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "cGJ5fju0HEKfZT5V",
+            "name": "Google Sheets account 2"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "move",
+          "fileId": {
+            "__rl": true,
+            "value": "={{ $('Download file').item.json.id }}",
+            "mode": "id"
+          },
+          "driveId": {
+            "__rl": true,
+            "mode": "list",
+            "value": "My Drive"
+          },
+          "folderId": {
+            "__rl": true,
+            "value": "1rcWlI0NxVLoAj3m9DDbfbCWAOYHbuF-T",
+            "mode": "list",
+            "cachedResultName": "Przetworzone",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/1rcWlI0NxVLoAj3m9DDbfbCWAOYHbuF-T"
+          }
+        },
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          2000,
+          -16
+        ],
+        "id": "75f7e0f1-34d2-41ea-a1e3-d4249686316a",
+        "name": "Move to Processed",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "TzGbHKnjytdXTibB",
+            "name": "WDRAZAJ_AI_CREDENTIALS"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "fileId": {
+            "__rl": true,
+            "value": "={{ $json.id }}",
+            "mode": "id"
+          },
+          "newUpdatedFileName": "={{ $('Append row in sheet').item.json.Vendor }}_{{ $('Append row in sheet').item.json.ReceiptId }}_{{ new Date($('Append row in sheet').item.json.Date).toISOString().slice(0,10).replaceAll('-', '') }}_{{ $('Append row in sheet').item.json.Amount }}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          2192,
+          -16
+        ],
+        "id": "d6289a17-f8d0-4e7c-8a62-04be6b4183f5",
+        "name": "Update processed file name",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "TzGbHKnjytdXTibB",
+            "name": "WDRAZAJ_AI_CREDENTIALS"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://vision.googleapis.com/v1/images:annotate",
+          "sendQuery": true,
+          "queryParameters": {
+            "parameters": [
+              {
+                "name": "key",
+                "value": "AIzaSyCaWUKU6mvQVCqZ1Q2-r9LRfUYhWVR9fZQ"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"requests\": [\n    {\n      \"image\": {\n        \"content\": \"{{$json.data}}\"\n      },\n      \"features\": [\n        { \"type\": \"DOCUMENT_TEXT_DETECTION\" }\n      ]\n    }\n  ]\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          928,
+          48
+        ],
+        "id": "c2c656d4-2e44-4657-affc-8e86c138f2fb",
+        "name": "OCR API - Image"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://vision.googleapis.com/v1/files:annotate",
+          "sendQuery": true,
+          "queryParameters": {
+            "parameters": [
+              {
+                "name": "key",
+                "value": "AIzaSyCaWUKU6mvQVCqZ1Q2-r9LRfUYhWVR9fZQ"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"requests\": [\n    {\n      \"inputConfig\": {\n        \"content\": \"{{ $('Extract from File').item.json.data }}\",\n        \"mimeType\": \"application/pdf\"\n      },\n      \"features\": [\n        {\n          \"type\": \"DOCUMENT_TEXT_DETECTION\"\n        }\n      ]\n    }\n  ]\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          928,
+          -160
+        ],
+        "id": "2bf4f8e6-ce74-4eaf-90f3-36188fc22342",
+        "name": "OCR API - PDF"
+      },
+      {
+        "parameters": {
+          "jsCode": "// n8n Code node (Run Once for All Items) - aggregate OCR text from PDF pages\n\nlet aggregatedText = '';\nconst pageTexts = [];\n\n// helper: safely extract page text from a single page response\nfunction extractPageText(page) {\n  // Most common for Vision OCR:\n  // - page.fullTextAnnotation.text\n  // Fallback:\n  // - page.textAnnotations[0].description\n  if (page?.fullTextAnnotation?.text) return page.fullTextAnnotation.text;\n  if (Array.isArray(page?.textAnnotations) && page.textAnnotations[0]?.description) {\n    return page.textAnnotations[0].description;\n  }\n  return '';\n}\n\n// This handles two common shapes:\n// A) Each input item is a \"page\" item: item.json.responses[0] is the page response\n// B) One item contains multiple pages: item.json.responses[0].responses is an array of pages\n\nlet pageCounter = 0;\n\nfor (const item of $input.all()) {\n  // Case B: nested pages array\n  const nestedPages = item?.json?.responses?.[0]?.responses;\n  if (Array.isArray(nestedPages)) {\n    for (const page of nestedPages) {\n      const pageText = extractPageText(page);\n      if (pageText.trim()) {\n        pageCounter += 1;\n        pageTexts.push({ pageNumber: pageCounter, text: pageText });\n        aggregatedText += pageText.trim() + '\\n\\n';\n      }\n    }\n    continue;\n  }\n\n  // Case A: page response is directly at responses[0] (or sometimes in item.json.responses)\n  const directPage =\n    item?.json?.responses?.[0] ??\n    item?.json?.responses ??\n    item?.json;\n\n  const pageText = extractPageText(directPage);\n  if (pageText.trim()) {\n    pageCounter += 1;\n    pageTexts.push({ pageNumber: pageCounter, text: pageText });\n    aggregatedText += pageText.trim() + '\\n\\n';\n  }\n}\n\n// Final cleanup\naggregatedText = aggregatedText.trim();\n\nreturn [\n  {\n    json: {\n      aggregatedText,\n      totalPages: pageTexts.length,\n      pages: pageTexts\n    }\n  }\n];\n"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1136,
+          -160
+        ],
+        "id": "4c26136a-64ef-4055-b6f8-05ca0a320832",
+        "name": "Aggregate data"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "88c93bac-49a5-4553-8fcc-55a13ffac47b",
+                "name": "extracted_text_pdf",
+                "value": "={{ $json.aggregatedText }}",
+                "type": "string"
+              },
+              {
+                "id": "1a488193-aed4-4266-bfab-0fccd34eb0f4",
+                "name": "extracted_text_image",
+                "value": "={{ $json.responses[0].fullTextAnnotation.text }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          1280,
+          -16
+        ],
+        "id": "928eeab5-746f-4e89-9234-a82e4fcee5e6",
+        "name": "Edit Fields"
+      }
+    ],
+    "connections": {
+      "Google Drive Trigger": {
+        "main": [
+          [
+            {
+              "node": "Download file",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Download file": {
+        "main": [
+          [
+            {
+              "node": "Extract from File",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Switch": {
+        "main": [
+          [
+            {
+              "node": "OCR API - PDF",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "OCR API - Image",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "OCR API - Image",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Extract from File": {
+        "main": [
+          [
+            {
+              "node": "Switch",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenAI Chat Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "Information Extractor",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Information Extractor": {
+        "main": [
+          [
+            {
+              "node": "Append row in sheet",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Append row in sheet": {
+        "main": [
+          [
+            {
+              "node": "Move to Processed",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Move to Processed": {
+        "main": [
+          [
+            {
+              "node": "Update processed file name",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OCR API - Image": {
+        "main": [
+          [
+            {
+              "node": "Edit Fields",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OCR API - PDF": {
+        "main": [
+          [
+            {
+              "node": "Aggregate data",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Aggregate data": {
+        "main": [
+          [
+            {
+              "node": "Edit Fields",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Edit Fields": {
+        "main": [
+          [
+            {
+              "node": "Information Extractor",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1",
+      "availableInMCP": false
+    },
+    "staticData": null,
+    "meta": {
+      "templateCredsSetupCompleted": true
+    },
+    "pinData": {},
+    "versionId": "ac4106e4-3df4-4faf-9d12-88864f413801",
+    "activeVersionId": null,
+    "triggerCount": 0,
+    "shared": [
+      {
+        "updatedAt": "2025-12-24T13:15:55.191Z",
+        "createdAt": "2025-12-24T13:15:55.191Z",
+        "role": "workflow:owner",
+        "workflowId": "yNxGeVVXGbI8JmuA",
+        "projectId": "2jlhRfElT6lOiXuI"
+      }
+    ],
+    "activeVersion": null,
+    "tags": []
+  }
+}
