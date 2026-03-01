@@ -1,0 +1,702 @@
+{
+  "_backup_meta": {
+    "backed_up_at": "2026-03-01T12:45:15.695Z",
+    "n8n_instance": "https://wdrazajai.app.n8n.cloud",
+    "workflow_id": "zm6YHp6xpJdMar3J",
+    "workflow_name": "Stolarz Mirek",
+    "active": false,
+    "is_archived": false
+  },
+  "workflow": {
+    "updatedAt": "2025-12-07T12:24:50.000Z",
+    "createdAt": "2025-10-08T17:32:09.212Z",
+    "id": "zm6YHp6xpJdMar3J",
+    "name": "Stolarz Mirek",
+    "active": false,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "=Tytuł wiadomości: {{ $json.Subject }}\nTreść wiadomości: {{ $json.snippet }}\nAdres nadawcy: {{ $json.From }}\nWątek konwersacji: {{ $json.threadId }}",
+          "options": {
+            "systemMessage": "=You are the “Lead & Offer Processing Agent” for Warsztat Mirek Stolarz.\nYour responsibility is to classify every incoming email, extract data, update or create leads, perform pricing, and generate a final HTML reply only when allowed. You MUST strictly follow all protocols below.\nNever use general knowledge, conversation memory, assumptions, or invented data.\nYour only sources of truth are: the current email, getLead, getPricing, nodeCalculator.\nAlways apply the most restrictive rule if any rules appear to conflict.\n\n⸻\n\nROLE & GOAL\n\nYou are responsible for:\n\n• klasyfikację wiadomości (Lead / Oferta / Reszta),\n• obsługę leadów (getLead → saveLead / updateLead),\n• wycenę przez połączenie narzędzi getPricing + nodeCalculator,\n• przygotowanie krótkiej odpowiedzi HTML (tylko gdy dozwolone),\n• wysłanie jej przez sendEmail (możesz wysłać tylko jedną wiadomość jako odpowiedź),\n• poprawne użycie narzędzi bez wyjątków.\n\nNie wolno Ci tworzyć żadnych danych, które nie istnieją w treści emaila lub narzędziach.\nMasz generować wyłącznie dane wymagane przez narzędzia workflow.\n\nAutomatyczna wycena z użyciem getPricing + nodeCalculator jest DOZWOLONA WYŁĄCZNIE dla:\n• stołów i biurek z litego drewna z Cennika,\n• krzeseł z Cennika (z poduszką lub bez),\n• szaf z tych samych rodzajów drewna.\n\nDla kuchni, garderób, zabudów, schodów i innych nietypowych mebli:\n• możesz je nadal klasyfikować jako LEAD,\n• masz zbierać i uzupełniać dane,\n• NIE wolno Ci wykonywać konkretnej wyceny ani używać nodeCalculator do liczenia pełnej ceny – jedynie informujesz, że szczegółową wycenę przygotujemy ręcznie.\n\n⸻\n\nTOOL USAGE RULES (CRITICAL)\n\nLEAD (99% przypadków)\n\nZawsze jako pierwszy krok wywołujesz getLead(threadId).\n\nJeśli lead istnieje → używasz updateLead, ale TYLKO dla brakujących lub zmienionych danych.\nJeśli lead nie istnieje → używasz saveLead, zapisując threadId.\n\nJeśli dane dla produktu z grupy (stół/biurko, krzesło, szafa) są kompletne lub w dopuszczalnych widełkach → MUSISZ wywołać getPricing, a następnie nodeCalculator.\n\nPo wycenie:\n• zapisujesz lead,\n• generujesz HTML,\n• wysyłasz go przez sendEmail.\n\nOFERTA (dostawcy B2B)\n\n• używasz wyłącznie saveOffer,\n• NIE wysyłasz odpowiedzi email,\n• nie używasz getLead, updateLead, saveLead, getPricing ani nodeCalculator.\n\nRESZTA\n\n• ignorujesz całkowicie,\n• nie wysyłasz odpowiedzi email,\n• nie wywołujesz żadnych narzędzi.\n\n⸻\n\nZAKAZY NARZĘDZI\n\n• Nigdy nie odpowiadaj bez użycia właściwych narzędzi.\n• Nigdy nie generuj cen ani terminów bez sekwencji getPricing + nodeCalculator.\n• Nigdy nie wykonuj ręcznych obliczeń — wszystkie obliczenia finansowe musi wykonać nodeCalculator.\n• Nigdy nie zapisuj leadów jako „Oferta”.\n• Nigdy nie zmieniaj tematu emaila.\n• Nigdy nie używaj materiałów spoza Cennika.\n• Zawsze stosuj najbardziej restrykcyjną zasadę.\n\n⸻\n\nKLASYFIKACJA WIADOMOŚCI\n\nLEAD – zapytania o meble, projekty, wyceny, wymiary, materiały, kuchnie, garderoby, zabudowy.\nOFERTA – dostawcy B2B.\nRESZTA – newslettery, reklamy, spam.\n\n⸻\n\nGREETING PROTOCOL\n\nWykryj język.\nUstal imię według kolejności: podpis → zwrot końcowy → from.name → treść maila.\nJeśli brak pewności → neutralne powitanie.\n\nPowitanie PL: „Dzień dobry,”\nPowitanie EN: „Hello,”\n\nZakazy:\n• Nie zgaduj imienia.\n• Nie używaj „Klient”, „User”.\n\n⸻\n\nEKSTRAKCJA DANYCH (KLUCZOWE POD WYCENĘ)\n\nDla każdego produktu osobno wyciągaj:\n• typ produktu,\n• rodzaj drewna (dokładnie z Cennika),\n• długość, szerokość, głębokość/wysokość w cm,\n• ilość sztuk,\n• poduszka dla krzeseł (tak/nie),\n• rodzaj nóg dla stołów/biurek,\n• transport,\n• budżet (jeśli podany).\n\nZasady:\n• możesz konwertować mm/metry na cm,\n• jeśli brakuje rodzaju drewna, ilości lub min. dwóch wymiarów → MUSISZ dopytać,\n• dla krzeseł MUSISZ ustalić poduszkę,\n• rodzaj nóg może być brakujący → wykonujesz wstępną wycenę.\n\n⸻\n\nKUCHNIE / GARDEROBY / ZABUDOWY – BEZ AUTOMATYCZNEJ WYCENY\n\n• zbierz dane,\n• zapisz lead,\n• NIE używaj nodeCalculator,\n• w HTML napisz, że przygotujemy indywidualną wycenę po analizie.\n\n⸻\n\nCHAOTYCZNE WIADOMOŚCI – ZASADY\n\n• możesz uśredniać wymiary,\n• jeśli coś jest niejednoznaczne → dopytaj,\n• dla blatów zawsze zbieraj długość, szerokość, drewno.\n\n⸻\n\nBUDŻET – PROTOKÓŁ\n\nJeśli: typ + min. jeden wymiar + budżet są dostępne →\n• pobierasz getPricing,\n• wywołujesz nodeCalculator,\n• oceniasz dopasowanie do budżetu,\n• proponujesz alternatywy (również liczone nodeCalculator).\n\n⸻\n\nWYCENA – PROTOKÓŁ STANDARDOWY (getPricing + nodeCalculator)\n\nMożesz wykonać wycenę tylko gdy:\n• dane kompletne lub w widełkach,\n• pobrano Cennik,\n• używasz nodeCalculator do wszystkich obliczeń.\n\nPrzekazujesz:\n• typ mebla,\n• rodzaj drewna,\n• długość/szerokość/głębokość (cm),\n• ilość sztuk,\n• poduszka (true/false),\n• rodzaj nóg (jeśli jest),\n• stawki cenowe z getPricing.\n\nnodeCalculator zwraca:\n• koszt materiału,\n• ewentualne dopłaty,\n• koszt końcowy.\n\nWynik trafia do pola „Szacowany koszt (PLN)” i „Szacowany czas (dni)”.\n\nZakazy:\n• nigdy nie licz samemu,\n• jedynym źródłem kosztu jest nodeCalculator.\n\n⸻\n\nZASADY PRZEKAZYWANIA RÓWNAŃ DO nodeCalculator (CRITICAL)\n\nAgent NIGDY nie wykonuje matematyki.\nAgent PRZEKAZUJE równanie + dane wejściowe do nodeCalculator.\n\n1) Stoły i biurka – równanie\n\ncena = (długość_m × szerokość_m × cena_za_m2_drewna) + cena_nóg\n\nCena_nóg = pozycja „Drewniane nogi (4 szt)” lub „Metalowe nogi (4 szt)”.\n\n2) Szafy – równanie\n\ncena = (długość_m × szerokość_m × głębokość_m × cena_za_m2_drewna)\n\n3) Krzesła – równania\n\nBez poduszki\n\ncena = cena_krzesła_z_cennika\n\nZ poduszką\n\ncena = cena_krzesła_z_cennika + cena_poduszki\n\nFORMAT danych przekazywanych do nodeCalculator\n\nAgent musi przekazać:\n\n{\n  \"typ_mebla\": \"...\",\n  \"rodzaj_drewna\": \"...\",\n  \"długość_m\": number,\n  \"szerokość_m\": number,\n  \"głębokość_m\": number | null,\n  \"ilość\": number,\n  \"poduszka\": true/false,\n  \"rodzaj_nóg\": \"...\",\n  \"cena_za_m2_drewna\": number,\n  \"cena_krzesła\": number,\n  \"cena_poduszki\": number,\n  \"cena_nóg\": number,\n  \"równanie\": \"...\"\n}\n\nRównanie musi być jednym z trzech powyższych.\n\n⸻\n\nFORMAT HTML (OUTPUT FORMAT)\n\nHTML:\n\n<p>[Powitanie]</p>\n<p>[Krótka odpowiedź / podsumowanie / dopytanie / oferta]</p>\n<p>[Parametry projektu lub prośba o dane]</p>\n<p>Z pozdrowieniami,<br>Mirek Stolarz</p>\n\nZasady:\n• profesjonalnie, jasno, bez Markdown,\n• bez templatów technicznych,\n• nie zmieniasz tematu wiadomości.\n\n⸻\n\nERRORS\n\nJeśli narzędzie zwróci błąd → odpowiedź:\n\n„Wystąpił błąd techniczny. Proszę spróbować ponownie za kilka minut.”\n\nBez cen, terminów, parametrów.\n\n⸻\n\nOSTATECZNE ZAKAZY\n\n• Nigdy nie używaj pamięci rozmowy.\n• Nigdy nie twórz danych, których nie ma.\n• Nigdy nie odpowiadaj bez narzędzi, jeśli są wymagane.\n• Nigdy nie używaj materiałów spoza Cennika.\n• Nigdy nie generuj kosztów bez getPricing + nodeCalculator.\n• Nigdy nie deklaruj użycia narzędzia bez realnego wywołania.\n• Zawsze stosuj najbardziej restrykcyjną zasadę."
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 2.2,
+        "position": [
+          320,
+          80
+        ],
+        "id": "a6937e24-d743-44ca-b933-e106a480d344",
+        "name": "AI Agent"
+      },
+      {
+        "parameters": {
+          "sessionIdType": "customKey",
+          "sessionKey": "={{ $json.threadId }}"
+        },
+        "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+        "typeVersion": 1.3,
+        "position": [
+          112,
+          336
+        ],
+        "id": "40fbda32-1969-4ecd-9e40-571334106e82",
+        "name": "Simple Memory"
+      },
+      {
+        "parameters": {
+          "pollTimes": {
+            "item": [
+              {
+                "mode": "everyMinute"
+              }
+            ]
+          },
+          "filters": {
+            "readStatus": "unread"
+          }
+        },
+        "type": "n8n-nodes-base.gmailTrigger",
+        "typeVersion": 1.3,
+        "position": [
+          0,
+          0
+        ],
+        "id": "7295471c-bba9-47f4-b7f0-fe3cfe699fc9",
+        "name": "Gmail Trigger",
+        "credentials": {
+          "gmailOAuth2": {
+            "id": "t8JfZ4E9FbFcya69",
+            "name": "MIREK_STOLARZ"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "documentId": {
+            "__rl": true,
+            "value": "1PFJg_FkPPQthCQD7Pa9luGbO6d_HeZgx_zfnYXzYffU",
+            "mode": "list",
+            "cachedResultName": "Mirek_Stolarz",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1PFJg_FkPPQthCQD7Pa9luGbO6d_HeZgx_zfnYXzYffU/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 1012649340,
+            "mode": "list",
+            "cachedResultName": "Cennik",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1PFJg_FkPPQthCQD7Pa9luGbO6d_HeZgx_zfnYXzYffU/edit#gid=1012649340"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheetsTool",
+        "typeVersion": 4.7,
+        "position": [
+          816,
+          480
+        ],
+        "id": "c7e2e929-2e65-4a6a-8b4f-93498cd3cde5",
+        "name": "getPricing",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "RW7KzWTgbJbEnOTB",
+            "name": "MIREK_STOLARZ"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "descriptionType": "manual",
+          "toolDescription": "Wiadomość powinna być profesjonalna i miła, używaj formy bez osobowych albo jak już się zwracasz per Pan/Pani to używaj formy \"Panu/Pani\".\nZadbaj o przejrzystą formę wiadmości, czyli na o odstępach między nagłówkiem, oraz przed stopką. Struktura ma być przejrzysta i czytelna.",
+          "operation": "reply",
+          "messageId": "={{ $json.id }}",
+          "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.gmailTool",
+        "typeVersion": 2.1,
+        "position": [
+          944,
+          336
+        ],
+        "id": "9cc4c917-f7e7-4743-bffa-06a5ec834007",
+        "name": "sendEmail",
+        "webhookId": "34d1c4f5-72aa-404c-b5d2-a57cf1dc7392",
+        "credentials": {
+          "gmailOAuth2": {
+            "id": "t8JfZ4E9FbFcya69",
+            "name": "MIREK_STOLARZ"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "descriptionType": "manual",
+          "toolDescription": "Zapisuje dane z odfiltrowane z wiadomości zakwalifikowanej jako **Oferta** w arkuszu, zgodnie z nazwami kolumn. ",
+          "operation": "append",
+          "documentId": {
+            "__rl": true,
+            "value": "1PFJg_FkPPQthCQD7Pa9luGbO6d_HeZgx_zfnYXzYffU",
+            "mode": "list",
+            "cachedResultName": "Mirek_Stolarz",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1PFJg_FkPPQthCQD7Pa9luGbO6d_HeZgx_zfnYXzYffU/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 916995497,
+            "mode": "list",
+            "cachedResultName": "Oferty",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1PFJg_FkPPQthCQD7Pa9luGbO6d_HeZgx_zfnYXzYffU/edit#gid=916995497"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "Data": "={{ new Date().toLocaleString(\"pl-PL\", { timeZone: \"Europe/Warsaw\" }).replace(\",\", \"\") }}",
+              "Nazwa firmy": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Nazwa_firmy', ``, 'string') }}",
+              "Email kontaktowy": "={{ $json.From }}",
+              "Co oferuje": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Co_oferuje', ``, 'string') }}",
+              "Cena (jeśli podana)": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Cena__je_li_podana_', ``, 'string') }}"
+            },
+            "matchingColumns": [],
+            "schema": [
+              {
+                "id": "Data",
+                "displayName": "Data",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Nazwa firmy",
+                "displayName": "Nazwa firmy",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Email kontaktowy",
+                "displayName": "Email kontaktowy",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Co oferuje",
+                "displayName": "Co oferuje",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Cena (jeśli podana)",
+                "displayName": "Cena (jeśli podana)",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheetsTool",
+        "typeVersion": 4.7,
+        "position": [
+          704,
+          480
+        ],
+        "id": "bf786e1b-1524-4c72-84d8-c5f486ddbc13",
+        "name": "saveOffer",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "RW7KzWTgbJbEnOTB",
+            "name": "MIREK_STOLARZ"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "descriptionType": "manual",
+          "toolDescription": "Zapisuje dane z odfiltrowane z wiadomości zakwalifikowanej jako **LEAD/Zamówienie** w arkuszu, zgodnie z nazwami kolumn. \n\nDATA MA BYĆ ZAPISWYANA W FORMACIE DD.MM.YYYY",
+          "operation": "append",
+          "documentId": {
+            "__rl": true,
+            "value": "1PFJg_FkPPQthCQD7Pa9luGbO6d_HeZgx_zfnYXzYffU",
+            "mode": "list",
+            "cachedResultName": "Mirek_Stolarz",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1PFJg_FkPPQthCQD7Pa9luGbO6d_HeZgx_zfnYXzYffU/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 1082356781,
+            "mode": "list",
+            "cachedResultName": "Leady",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1PFJg_FkPPQthCQD7Pa9luGbO6d_HeZgx_zfnYXzYffU/edit#gid=1082356781"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "Numer": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Numer', ``, 'string') }}",
+              "Data": "={{ new Date().toLocaleString(\"pl-PL\", { timeZone: \"Europe/Warsaw\" }).replace(\",\", \"\") }}",
+              "Nazwa klienta": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Nazwa_klienta', ``, 'string') }}",
+              "Email": "={{ $json.From }}",
+              "Opis zamówienia": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Opis_zam_wienia', ``, 'string') }}",
+              "Szacowany koszt (PLN)": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Szacowany_koszt__PLN_', ``, 'string') }}",
+              "Szacowany czas (dni)": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Szacowany_czas__dni_', ``, 'string') }}"
+            },
+            "matchingColumns": [],
+            "schema": [
+              {
+                "id": "Numer",
+                "displayName": "Numer",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Data",
+                "displayName": "Data",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Nazwa klienta",
+                "displayName": "Nazwa klienta",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Email",
+                "displayName": "Email",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Opis zamówienia",
+                "displayName": "Opis zamówienia",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Szacowany koszt (PLN)",
+                "displayName": "Szacowany koszt (PLN)",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Szacowany czas (dni)",
+                "displayName": "Szacowany czas (dni)",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheetsTool",
+        "typeVersion": 4.7,
+        "position": [
+          496,
+          480
+        ],
+        "id": "95d6fee3-7577-4c40-a87b-0d5aedd3dfc0",
+        "name": "saveLead",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "RW7KzWTgbJbEnOTB",
+            "name": "MIREK_STOLARZ"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "descriptionType": "manual",
+          "toolDescription": "Pobierz dane na temat Leadów ",
+          "documentId": {
+            "__rl": true,
+            "value": "1PFJg_FkPPQthCQD7Pa9luGbO6d_HeZgx_zfnYXzYffU",
+            "mode": "list",
+            "cachedResultName": "Mirek_Stolarz",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1PFJg_FkPPQthCQD7Pa9luGbO6d_HeZgx_zfnYXzYffU/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 1082356781,
+            "mode": "list",
+            "cachedResultName": "Leady",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1PFJg_FkPPQthCQD7Pa9luGbO6d_HeZgx_zfnYXzYffU/edit#gid=1082356781"
+          },
+          "filtersUI": {
+            "values": [
+              {
+                "lookupColumn": "Numer",
+                "lookupValue": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('values0_Value', ``, 'string') }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheetsTool",
+        "typeVersion": 4.7,
+        "position": [
+          384,
+          480
+        ],
+        "id": "31a92c54-8b2c-4358-9310-0fe72ff4f4cf",
+        "name": "getLead",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "RW7KzWTgbJbEnOTB",
+            "name": "MIREK_STOLARZ"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "descriptionType": "manual",
+          "toolDescription": "Nadpisuje dane zamówienia jeśli są w arkuszu\n\nDATA MA BYĆ ZAPISWYANA W FORMACIE DD.MM.YYYY",
+          "operation": "update",
+          "documentId": {
+            "__rl": true,
+            "value": "1PFJg_FkPPQthCQD7Pa9luGbO6d_HeZgx_zfnYXzYffU",
+            "mode": "list",
+            "cachedResultName": "Mirek_Stolarz",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1PFJg_FkPPQthCQD7Pa9luGbO6d_HeZgx_zfnYXzYffU/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 1082356781,
+            "mode": "list",
+            "cachedResultName": "Leady",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1PFJg_FkPPQthCQD7Pa9luGbO6d_HeZgx_zfnYXzYffU/edit#gid=1082356781"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "Numer": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Numer__using_to_match_', ``, 'string') }}",
+              "Data": "={{ new Date().toLocaleString(\"pl-PL\", { timeZone: \"Europe/Warsaw\" }).replace(\",\", \"\") }}",
+              "Email": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Email', ``, 'string') }}",
+              "Nazwa klienta": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Nazwa_klienta', ``, 'string') }}",
+              "Opis zamówienia": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Opis_zam_wienia', ``, 'string') }}",
+              "Szacowany koszt (PLN)": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Szacowany_koszt__PLN_', ``, 'string') }}",
+              "Szacowany czas (dni)": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Szacowany_czas__dni_', ``, 'string') }}"
+            },
+            "matchingColumns": [
+              "Numer"
+            ],
+            "schema": [
+              {
+                "id": "Numer",
+                "displayName": "Numer",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Data",
+                "displayName": "Data",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Nazwa klienta",
+                "displayName": "Nazwa klienta",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Email",
+                "displayName": "Email",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Opis zamówienia",
+                "displayName": "Opis zamówienia",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Szacowany koszt (PLN)",
+                "displayName": "Szacowany koszt (PLN)",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Szacowany czas (dni)",
+                "displayName": "Szacowany czas (dni)",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "row_number",
+                "displayName": "row_number",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "number",
+                "canBeUsedToMatch": true,
+                "readOnly": true,
+                "removed": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheetsTool",
+        "typeVersion": 4.7,
+        "position": [
+          256,
+          480
+        ],
+        "id": "c74c898f-3eb2-47d4-b8a7-3f2ca64cf8ba",
+        "name": "updateLead",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "RW7KzWTgbJbEnOTB",
+            "name": "MIREK_STOLARZ"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "model": {
+            "__rl": true,
+            "mode": "list",
+            "value": "gpt-4.1-mini"
+          },
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+        "typeVersion": 1.2,
+        "position": [
+          -32,
+          336
+        ],
+        "id": "8c80cb2a-d45b-411f-a45e-ab585ef69f0a",
+        "name": "OpenAI Chat Model",
+        "credentials": {
+          "openAiApi": {
+            "id": "0PmreRG9VqAnmyU6",
+            "name": "WdrazajAI"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+        "typeVersion": 1,
+        "position": [
+          608,
+          480
+        ],
+        "id": "775e5cd8-714e-4cb0-a3b2-1ab3b121638c",
+        "name": "Calculator"
+      }
+    ],
+    "connections": {
+      "Simple Memory": {
+        "ai_memory": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_memory",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Gmail Trigger": {
+        "main": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "getPricing": {
+        "ai_tool": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "sendEmail": {
+        "ai_tool": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "saveOffer": {
+        "ai_tool": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "saveLead": {
+        "ai_tool": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "getLead": {
+        "ai_tool": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "updateLead": {
+        "ai_tool": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenAI Chat Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Calculator": {
+        "ai_tool": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "staticData": {
+      "node:Gmail Trigger": {
+        "Gmail Trigger": {
+          "lastTimeChecked": 1764778790,
+          "possibleDuplicates": [
+            "19ae501ceee3ef7f",
+            "19ae501c11533a2b",
+            "19ae4fa948566e7f"
+          ]
+        }
+      }
+    },
+    "meta": {
+      "templateCredsSetupCompleted": true
+    },
+    "pinData": {},
+    "versionId": "430f4c89-6b0a-40f2-95a9-4d2ccd400353",
+    "activeVersionId": null,
+    "triggerCount": 1,
+    "shared": [
+      {
+        "updatedAt": "2025-10-08T17:32:09.218Z",
+        "createdAt": "2025-10-08T17:32:09.218Z",
+        "role": "workflow:owner",
+        "workflowId": "zm6YHp6xpJdMar3J",
+        "projectId": "2jlhRfElT6lOiXuI"
+      }
+    ],
+    "activeVersion": null,
+    "tags": []
+  }
+}
