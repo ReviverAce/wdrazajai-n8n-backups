@@ -1,19 +1,362 @@
 {
-  "last_backup": "2026-03-01T12:43:53.764Z",
+  "last_backup": "2026-03-01T13:19:07.386Z",
   "n8n_instance": "https://wdrazajai.app.n8n.cloud",
-  "total_workflows": 1,
+  "total_workflows": 50,
   "by_status": {
-    "active": 1,
-    "inactive": 0,
+    "active": 19,
+    "inactive": 31,
     "archived": 0
   },
   "workflows": [
+    {
+      "id": "KBBzMAIf23V56fOj",
+      "name": "[ARCHIVED] LinkedIn Content Generator",
+      "file": "inactive/archived-linkedin-content-generator_KBBzMAIf23V56fOj.json",
+      "status": "inactive",
+      "updated_at": "2026-02-28T16:59:20.954Z"
+    },
+    {
+      "id": "TFQksKZRnjCQNBqv",
+      "name": "[DEV] FIFO - KSEF AUTH",
+      "file": "inactive/dev-fifo-ksef-auth_TFQksKZRnjCQNBqv.json",
+      "status": "inactive",
+      "updated_at": "2026-02-01T14:30:04.180Z"
+    },
+    {
+      "id": "7GKAPeiiiLEeSjDd",
+      "name": "[DEV] FIFO - KSEF INVOICES INBOX",
+      "file": "inactive/dev-fifo-ksef-invoices-inbox_7GKAPeiiiLEeSjDd.json",
+      "status": "inactive",
+      "updated_at": "2026-02-02T14:11:06.827Z"
+    },
+    {
+      "id": "VbIHpBW3xKfcm3lF",
+      "name": "[DEV] FIFO - KSEF SEND INVOICE",
+      "file": "inactive/dev-fifo-ksef-send-invoice_VbIHpBW3xKfcm3lF.json",
+      "status": "inactive",
+      "updated_at": "2026-02-02T14:11:38.151Z"
+    },
+    {
+      "id": "gfVnKUahFYsoEF8EyW3U8",
+      "name": "[DEV] INEL - ERROR HANDLING",
+      "file": "active/dev-inel-error-handling_gfVnKUahFYsoEF8EyW3U8.json",
+      "status": "active",
+      "updated_at": "2026-02-13T02:48:26.139Z"
+    },
+    {
+      "id": "GXONhlMWZedkD0jw",
+      "name": "[DEV] INEL - INVOICE AUTOMATION",
+      "file": "active/dev-inel-invoice-automation_GXONhlMWZedkD0jw.json",
+      "status": "active",
+      "updated_at": "2026-02-09T13:29:14.286Z"
+    },
+    {
+      "id": "VUTTefqWC9CjyAHdCTq79",
+      "name": "[DEV] INEL - MONITORING",
+      "file": "active/dev-inel-monitoring_VUTTefqWC9CjyAHdCTq79.json",
+      "status": "active",
+      "updated_at": "2026-02-09T13:37:22.537Z"
+    },
+    {
+      "id": "xrw536MrdMNYzVgM",
+      "name": "[DEV] INEL - RAG",
+      "file": "inactive/dev-inel-rag_xrw536MrdMNYzVgM.json",
+      "status": "inactive",
+      "updated_at": "2026-02-09T13:38:44.364Z"
+    },
+    {
+      "id": "YiPRvx158LGYx6Gp",
+      "name": "[DEV] LinkedIn Post Publisher",
+      "file": "inactive/dev-linkedin-post-publisher_YiPRvx158LGYx6Gp.json",
+      "status": "inactive",
+      "updated_at": "2026-02-14T07:51:35.000Z"
+    },
+    {
+      "id": "DR5yFwrBmGxVdbFr",
+      "name": "[DEV] LinkedIn Topic Discovery",
+      "file": "inactive/dev-linkedin-topic-discovery_DR5yFwrBmGxVdbFr.json",
+      "status": "inactive",
+      "updated_at": "2026-02-28T17:25:11.060Z"
+    },
+    {
+      "id": "WkMwFfioCrfq1PfA",
+      "name": "[DEV] Polsat Media - Multi-Source Image Enrichment v2",
+      "file": "inactive/dev-polsat-media-multi-source-image-enrichment-v2_WkMwFfioCrfq1PfA.json",
+      "status": "inactive",
+      "updated_at": "2026-02-27T14:23:04.884Z"
+    },
+    {
+      "id": "vKQHvPhQwx1O2FUTyLd1W",
+      "name": "[DEV] Polsat Media - TMDB Multi-Image Enrichment",
+      "file": "active/dev-polsat-media-tmdb-multi-image-enrichment_vKQHvPhQwx1O2FUTyLd1W.json",
+      "status": "active",
+      "updated_at": "2026-02-09T14:08:06.247Z"
+    },
+    {
+      "id": "6uSATTgLLkCizWs0",
+      "name": "[DEV] Polsat Media - TMDB Multi-Image Enrichment (Excel)",
+      "file": "inactive/dev-polsat-media-tmdb-multi-image-enrichment-excel_6uSATTgLLkCizWs0.json",
+      "status": "inactive",
+      "updated_at": "2026-02-14T09:52:28.696Z"
+    },
+    {
+      "id": "ehPQEJaj38OVE7zy",
+      "name": "[Enxoo AI Ideas] 1. AI ideas form assistant",
+      "file": "inactive/enxoo-ai-ideas-1-ai-ideas-form-assistant_ehPQEJaj38OVE7zy.json",
+      "status": "inactive",
+      "updated_at": "2026-01-16T07:53:31.000Z"
+    },
+    {
+      "id": "6Tw7RUD5WNcHOPr9",
+      "name": "[Enxoo AI Ideas] 1.1 Add Idea row to AI IDEAS database",
+      "file": "inactive/enxoo-ai-ideas-1-1-add-idea-row-to-ai-ideas-database_6Tw7RUD5WNcHOPr9.json",
+      "status": "inactive",
+      "updated_at": "2026-01-16T07:53:47.000Z"
+    },
+    {
+      "id": "WYWP3xH8Wf1Fnkzz",
+      "name": "[Enxoo AI Ideas] 2. Score card assistant",
+      "file": "inactive/enxoo-ai-ideas-2-score-card-assistant_WYWP3xH8Wf1Fnkzz.json",
+      "status": "inactive",
+      "updated_at": "2026-01-16T07:54:05.000Z"
+    },
+    {
+      "id": "xhRr0uFw4pyfhDU0",
+      "name": "[Enxoo AI Ideas] 3. Hypothesis assistant",
+      "file": "inactive/enxoo-ai-ideas-3-hypothesis-assistant_xhRr0uFw4pyfhDU0.json",
+      "status": "inactive",
+      "updated_at": "2026-01-16T07:54:16.000Z"
+    },
+    {
+      "id": "bsTAdNrtFHGzg6Wp",
+      "name": "[Enxoo AI Ideas] 4. Research brief assistant",
+      "file": "inactive/enxoo-ai-ideas-4-research-brief-assistant_bsTAdNrtFHGzg6Wp.json",
+      "status": "inactive",
+      "updated_at": "2026-01-16T07:54:32.473Z"
+    },
+    {
+      "id": "MKHvlo7luAfjYfeA",
+      "name": "[Enxoo AI Ideas] Transfer manual form ideas to automation",
+      "file": "inactive/enxoo-ai-ideas-transfer-manual-form-ideas-to-automation_MKHvlo7luAfjYfeA.json",
+      "status": "inactive",
+      "updated_at": "2026-01-16T07:55:13.115Z"
+    },
+    {
+      "id": "01SIEHUa1tY1Aj4D",
+      "name": "[MIWOJ] Google Drive → NotebookLM Enterprise",
+      "file": "inactive/miwoj-google-drive-notebooklm-enterprise_01SIEHUa1tY1Aj4D.json",
+      "status": "inactive",
+      "updated_at": "2026-02-14T07:50:20.297Z"
+    },
+    {
+      "id": "B0R5JweZXywfvMur",
+      "name": "[MIWOJ] Stolarz Mirek",
+      "file": "inactive/miwoj-stolarz-mirek_B0R5JweZXywfvMur.json",
+      "status": "inactive",
+      "updated_at": "2026-02-14T07:48:36.865Z"
+    },
+    {
+      "id": "vc8vc7Z6tuluzYVJ",
+      "name": "[PROD] INEL - ERROR HANDLING",
+      "file": "active/prod-inel-error-handling_vc8vc7Z6tuluzYVJ.json",
+      "status": "active",
+      "updated_at": "2026-02-09T13:16:14.655Z"
+    },
+    {
+      "id": "NFk7ok06cGmyi9TR",
+      "name": "[PROD] INEL - INVOICE AUTOMATION",
+      "file": "active/prod-inel-invoice-automation_NFk7ok06cGmyi9TR.json",
+      "status": "active",
+      "updated_at": "2026-02-09T13:30:12.330Z"
+    },
+    {
+      "id": "n60Q0d5IuHqysqzk",
+      "name": "[PROD] INEL - MONITORING",
+      "file": "active/prod-inel-monitoring_n60Q0d5IuHqysqzk.json",
+      "status": "active",
+      "updated_at": "2026-02-09T13:30:28.493Z"
+    },
+    {
+      "id": "dTGTtO0BzAduc00d",
+      "name": "[PROD] INEL - RAG",
+      "file": "active/prod-inel-rag_dTGTtO0BzAduc00d.json",
+      "status": "active",
+      "updated_at": "2026-02-09T13:33:56.788Z"
+    },
+    {
+      "id": "mKU2GLEOS3GxixMD",
+      "name": "[PROD] INEL - SUPABASE HEARTBEAT",
+      "file": "active/prod-inel-supabase-heartbeat_mKU2GLEOS3GxixMD.json",
+      "status": "active",
+      "updated_at": "2026-02-25T14:18:23.447Z"
+    },
+    {
+      "id": "qbOSaENwdtXKQhbo",
+      "name": "[PROD] WAI  - GLOBAL ERROR WORKFLOW",
+      "file": "active/prod-wai-global-error-workflow_qbOSaENwdtXKQhbo.json",
+      "status": "active",
+      "updated_at": "2026-02-13T02:26:10.843Z"
+    },
+    {
+      "id": "wmbYhKHXUj9RZwpK",
+      "name": "[PROD] WAI - Backup Workflows to GitHub",
+      "file": "inactive/prod-wai-backup-workflows-to-github_wmbYhKHXUj9RZwpK.json",
+      "status": "inactive",
+      "updated_at": "2026-03-01T13:15:27.230Z"
+    },
+    {
+      "id": "yZhRy919iluDOIrx",
+      "name": "[PROD] WAI - CLIENT FOLDER SETUP",
+      "file": "active/prod-wai-client-folder-setup_yZhRy919iluDOIrx.json",
+      "status": "active",
+      "updated_at": "2026-02-13T02:26:46.766Z"
+    },
     {
       "id": "ExsN8c9VSMc5g3q9FM2xW",
       "name": "[PROD] WAI - SUPABASE HEARTBEAT",
       "file": "active/prod-wai-supabase-heartbeat_ExsN8c9VSMc5g3q9FM2xW.json",
       "status": "active",
       "updated_at": "2026-02-25T14:22:03.821Z"
+    },
+    {
+      "id": "QadmkLcu1QUTMg2Y",
+      "name": "[PROD] WAI - SUPPORT CHECK",
+      "file": "active/prod-wai-support-check_QadmkLcu1QUTMg2Y.json",
+      "status": "active",
+      "updated_at": "2026-02-13T02:26:21.004Z"
+    },
+    {
+      "id": "NMNpyAnI9qwnPeLwL-EN6",
+      "name": "Auto-generate task descriptions on new row creation",
+      "file": "inactive/auto-generate-task-descriptions-on-new-row-creation_NMNpyAnI9qwnPeLwL-EN6.json",
+      "status": "inactive",
+      "updated_at": "2026-02-17T09:48:18.822Z"
+    },
+    {
+      "id": "sPkYuFOxKwyXH4e3",
+      "name": "Backup all n8n workflows to Google Drive every 4 hours",
+      "file": "inactive/backup-all-n8n-workflows-to-google-drive-every-4-hours_sPkYuFOxKwyXH4e3.json",
+      "status": "inactive",
+      "updated_at": "2026-02-14T07:50:00.650Z"
+    },
+    {
+      "id": "yNxGeVVXGbI8JmuA",
+      "name": "Invoice_manager",
+      "file": "inactive/invoice-manager_yNxGeVVXGbI8JmuA.json",
+      "status": "inactive",
+      "updated_at": "2026-01-08T10:40:05.119Z"
+    },
+    {
+      "id": "icfBGX1RF31QQY5q",
+      "name": "MailSender",
+      "file": "inactive/mailsender_icfBGX1RF31QQY5q.json",
+      "status": "inactive",
+      "updated_at": "2025-10-12T12:59:30.000Z"
+    },
+    {
+      "id": "hIVKZfZbiYyfm5rR",
+      "name": "Mirek Stolarz 2.0",
+      "file": "inactive/mirek-stolarz-2-0_hIVKZfZbiYyfm5rR.json",
+      "status": "inactive",
+      "updated_at": "2025-12-07T12:23:18.000Z"
+    },
+    {
+      "id": "6hDD8ikmeV4XpdEM",
+      "name": "My Sub-workflow",
+      "file": "inactive/my-sub-workflow_6hDD8ikmeV4XpdEM.json",
+      "status": "inactive",
+      "updated_at": "2025-11-05T15:00:12.000Z"
+    },
+    {
+      "id": "TE2rYYOClcUeffbM",
+      "name": "papa_raphael_invoices",
+      "file": "inactive/papa-raphael-invoices_TE2rYYOClcUeffbM.json",
+      "status": "inactive",
+      "updated_at": "2026-01-17T13:27:46.082Z"
+    },
+    {
+      "id": "q6qwOtwiDRZUB8PQ",
+      "name": "Pre-call Report",
+      "file": "inactive/pre-call-report_q6qwOtwiDRZUB8PQ.json",
+      "status": "inactive",
+      "updated_at": "2025-11-25T20:56:35.000Z"
+    },
+    {
+      "id": "WuWLxUJxn30whgPe",
+      "name": "Rafi: Finance assistant",
+      "file": "active/rafi-finance-assistant_WuWLxUJxn30whgPe.json",
+      "status": "active",
+      "updated_at": "2026-01-13T09:34:08.216Z"
+    },
+    {
+      "id": "MD4k2zo2Irs0pt50",
+      "name": "Rafi: Finance assistant: Error Workflow",
+      "file": "active/rafi-finance-assistant-error-workflow_MD4k2zo2Irs0pt50.json",
+      "status": "active",
+      "updated_at": "2026-01-12T12:54:38.179Z"
+    },
+    {
+      "id": "eThsIWQR8PJcM0nB",
+      "name": "RAG - Chat agent",
+      "file": "active/rag-chat-agent_eThsIWQR8PJcM0nB.json",
+      "status": "active",
+      "updated_at": "2026-02-09T11:52:42.960Z"
+    },
+    {
+      "id": "Oyqu9TrP_cLF5lB8QWf4b",
+      "name": "RAG - Clean up",
+      "file": "active/rag-clean-up_Oyqu9TrP_cLF5lB8QWf4b.json",
+      "status": "active",
+      "updated_at": "2026-02-08T16:22:41.702Z"
+    },
+    {
+      "id": "H779fDjaehTbQym_mjzav",
+      "name": "RAG - Ingestion System",
+      "file": "active/rag-ingestion-system_H779fDjaehTbQym_mjzav.json",
+      "status": "active",
+      "updated_at": "2026-02-09T10:15:59.277Z"
+    },
+    {
+      "id": "ugTgITQjGFcf5Blt",
+      "name": "RAG Template",
+      "file": "inactive/rag-template_ugTgITQjGFcf5Blt.json",
+      "status": "inactive",
+      "updated_at": "2025-11-25T12:54:48.000Z"
+    },
+    {
+      "id": "I1N493kNsm7wZXZR",
+      "name": "RAG: papa_raphael_invoices short SM (Copy)",
+      "file": "inactive/rag-papa-raphael-invoices-short-sm-copy_I1N493kNsm7wZXZR.json",
+      "status": "inactive",
+      "updated_at": "2026-01-20T10:45:45.589Z"
+    },
+    {
+      "id": "rFQgMBlcagTmSpt8",
+      "name": "Składki ZUS - wysyłka e-maili",
+      "file": "active/sk-adki-zus-wysy-ka-e-maili_rFQgMBlcagTmSpt8.json",
+      "status": "active",
+      "updated_at": "2026-02-26T20:32:05.000Z"
+    },
+    {
+      "id": "icXKpiNsCOY9nYHS",
+      "name": "Sprawdzanie nowych wiadomosci",
+      "file": "inactive/sprawdzanie-nowych-wiadomosci_icXKpiNsCOY9nYHS.json",
+      "status": "inactive",
+      "updated_at": "2025-12-04T08:26:35.000Z"
+    },
+    {
+      "id": "zm6YHp6xpJdMar3J",
+      "name": "Stolarz Mirek",
+      "file": "inactive/stolarz-mirek_zm6YHp6xpJdMar3J.json",
+      "status": "inactive",
+      "updated_at": "2025-12-07T12:24:50.000Z"
+    },
+    {
+      "id": "qYf94yUx6nWcvXwI",
+      "name": "Zbieranie zapytań",
+      "file": "inactive/zbieranie-zapyta_qYf94yUx6nWcvXwI.json",
+      "status": "inactive",
+      "updated_at": "2025-12-04T08:26:34.000Z"
     }
   ]
 }
