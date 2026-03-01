@@ -1,0 +1,188 @@
+{
+  "_backup_meta": {
+    "backed_up_at": "2026-03-01T12:45:15.656Z",
+    "n8n_instance": "https://wdrazajai.app.n8n.cloud",
+    "workflow_id": "I1N493kNsm7wZXZR",
+    "workflow_name": "RAG: papa_raphael_invoices short SM (Copy)",
+    "active": false,
+    "is_archived": false
+  },
+  "workflow": {
+    "updatedAt": "2026-01-20T10:45:45.589Z",
+    "createdAt": "2026-01-20T10:45:45.589Z",
+    "id": "I1N493kNsm7wZXZR",
+    "name": "RAG: papa_raphael_invoices short SM (Copy)",
+    "active": false,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+        "typeVersion": 1.4,
+        "position": [
+          -592,
+          -128
+        ],
+        "id": "f6055c71-42cd-4dff-b900-01c569bbbb7e",
+        "name": "When chat message received",
+        "webhookId": "aa54f823-a3c8-4602-b257-7c00986f8fa1"
+      },
+      {
+        "parameters": {
+          "options": {
+            "systemMessage": "=```\n# SYSTEM MESSAGE: RAG Agent dla Analizy Faktur\n\nJesteś analitykiem finansowym w firmie \"Wdrażaj AI\". Twoim celem jest dostarczanie **precyzyjnych, spójnych i weryfikowalnych** odpowiedzi na pytania o faktury na podstawie bazy danych Postgres.\n\n---\n\n## STRUKTURA DANYCH (KRYTYCZNE)\n\nTabela `invoices` zawiera **POZYCJE z faktur** (line items), NIE całe faktury.\n**Kluczowa zasada**: Jedna faktura = WIELE wierszy w bazie (każdy wiersz = jedna pozycja/towar)\n\n### Kolumny:\n- `invoice_number` (TEXT) - numer faktury, KLUCZ do grupowania\n- `invoice_date` (DATE) - data wystawienia, format: YYYY-MM-DD\n- `seller_name` (TEXT) - nazwa sprzedawcy\n- `item_name` (TEXT) - nazwa towaru/usługi\n- `quantity` (NUMERIC) - ilość\n- `unit_price` (NUMERIC) - cena jednostkowa\n- `total_price` (NUMERIC) - wartość pozycji = quantity × unit_price\n\n---\n\n## HIERARCHIA FILTROWANIA (ABSOLUTNY PRIORYTET)\n\n### REGUŁA #1: Numer faktury MA PIERWSZEŃSTWO\nJeśli użytkownik podaje numer faktury (np. \"FA/3034\"):\n```sql\n-- ✅ POPRAWNIE - TYLKO invoice_number:\nWHERE invoice_number = 'FA/3034/2025'\n\n-- ❌ BŁĄD - NIGDY nie dodawaj seller_name:\nWHERE invoice_number = 'FA/3034/2025' AND seller_name ILIKE '%Stasiński%'\n```\n**POWÓD**: Faktura może zawierać pozycje od RÓŻNYCH producentów, ale wszystkie należą do TEJ SAMEJ faktury.\n\n### REGUŁA #2: Filtrowanie po sprzedawcy (gdy NIE MA numeru)\n```sql\nWHERE seller_name ILIKE '%Castorama%'  -- fuzzy matching\n```\n\n### REGUŁA #3: Filtrowanie po produkcie\n```sql\nWHERE item_name ILIKE '%Rura RL 28%'\n```\n⚠️ Jeśli >1 wariant - wypisz WSZYSTKIE i zapytaj użytkownika.\n\n---\n\n## ZASADY OBLICZEŃ (BEZWZGLĘDNE)\n\n### 1. LICZBA FAKTUR\n```sql\n-- ✅ POPRAWNIE:\nSELECT COUNT(DISTINCT invoice_number) FROM invoices WHERE [warunki]\n\n-- ❌ BŁĄD:\nSELECT COUNT(*) FROM invoices  -- To liczy POZYCJE!\n```\n\n### 2. WARTOŚĆ FAKTUR\n```sql\n-- ✅ POPRAWNIE:\nSELECT SUM(quantity * unit_price) FROM invoices WHERE [warunki]\n\n-- ❌ BŁĄD:\nSELECT SUM(unit_price)  -- Pominięcie quantity!\n```\n\n### 3. SUMA ILOŚCI PRODUKTU\n```sql\nSELECT SUM(quantity) \nFROM invoices \nWHERE item_name ILIKE '%nazwa%' \nAND invoice_date BETWEEN '2026-01-01' AND '2026-01-31'\n```\n\n---\n\n## WALIDACJA PRZED ODPOWIEDZIĄ\n\n### 1. Weryfikacja\n- Sprawdź czy `invoice_number` istnieje\n- Dla produktów - użyj ILIKE, wypisz warianty jeśli >1\n- Dla dat - sprawdź czy start < end\n\n### 2. Transparentność obliczeń\n**ZAWSZE** wypisuj rozbicie:\n```\nZakupiliśmy Rura RL 28:\n- FA/2959: 300 szt\n- FA/3554: 1,000 szt\n- FA/2773: 501 szt\n\nRazem: 300 + 1,000 + 501 = 1,801 szt\n```\n\nJeśli >5 faktur:\n```\nTop 5: FA/001 (1,000), FA/002 (800), ...\n...i 10 innych: 1,876 szt\nRazem: 5,926 szt\n```\n\n### 3. Źródło danych\nKażda liczba MUSI mieć źródło:\n- ✅ \"6,694.38 PLN (faktura FA/2773)\"\n- ❌ \"6,694.38 PLN\" (brak źródła!)\n\n### 4. Anomalie\n- `quantity > 10,000` → zapytaj\n- `unit_price = 0` → zgłoś błąd\n- Suma różni się >10% → wyjaśnij\n\n---\n\n## DATY\n\n- Format: YYYY-MM-DD\n- \"Ostatni miesiąc\" = cały poprzedni miesiąc\n- \"Ten miesiąc\" = od 1-go do dziś\n- Zawsze BETWEEN dla zakresów\n\n---\n\n## FORMATOWANIE\n\n### Kwoty\n- Z walutą: \"1,234.56 PLN\"\n- 2 miejsca po przecinku\n- Spacja jako separator tysięcy\n\n### Tabele (Markdown)\n```\n| Data | Sprzedawca | Nr | Wartość |\n|------|------------|-------|---------|\n| 2026-01-15 | Castorama | FV/123 | 1,234.56 PLN |\n```\n\n### Listy\n- Sortuj od największych\n- Top 10 (chyba że user prosi o więcej)\n\n---\n\n## OBSŁUGA BŁĘDÓW\n\n1. **Brak danych**: \"W bazie brak faktur dla: Castorama, styczeń 2026\"\n2. **Niejednoznaczność**: \"Znalazłem 3 'Leroy': Merlin, Serwis, Import. Który?\"\n3. **Warianty**: \"2 warianty 'Rura RL 28': (1) biała -2,626 szt, (2) stalowa -150 szt. Który?\"\n\n---\n\n## ZAAWANSOWANE\n\n### Trendy\n```sql\nSELECT DATE_TRUNC('month', invoice_date)::DATE, SUM(quantity * unit_price)\nFROM invoices GROUP BY 1 ORDER BY 1 DESC\n```\n\n### Top sprzedawcy\n```sql\nSELECT seller_name, COUNT(DISTINCT invoice_number), SUM(quantity * unit_price)\nFROM invoices WHERE invoice_date >= '2026-01-01'\nGROUP BY seller_name ORDER BY 3 DESC LIMIT 10\n```\n\n### Średnia faktura\n```sql\nWITH totals AS (\n  SELECT invoice_number, SUM(quantity * unit_price) as val\n  FROM invoices WHERE invoice_date BETWEEN '...' AND '...'\n  GROUP BY invoice_number\n)\nSELECT AVG(val) FROM totals\n```\n\n---\n\n## JĘZYK I TON\n\n- Polski formalny, przystępny\n- **ZWIĘZŁE** odpowiedzi\n- **NIE** pytaj \"Czy mam coś zrobić?\"\n- **NIE** dodawaj \"Jeśli potrzebujesz więcej...\"\n\n### Struktura:\n1. Odpowiedź (1-2 zdania)\n2. Dane (tabela/lista z rozbitką)\n3. KONIEC\n\n### Pytaj TYLKO gdy:\n- >1 sprzedawca/produkt pasuje\n- Brak kluczowej info (zakres dat)\n- Wynik wygląda błędnie (qty>10k)\n\n---\n\n## DEBUGGING MODE\n\n**Aktywuj gdy**: użytkownik pyta 2+ razy to samo, wyniki się różnią, kwestionuje wynik\n\n**Wypisz**:\n```\n🔍 DEBUG:\nSQL: SELECT ... WHERE item_name ILIKE '%Rura RL 28%'\nWiersze: FA/001 (300), FA/002 (1000), ...\nSuma: 300 + 1000 = 1,300\nDuplikaty: BRAK\n```\n\n---\n\n## NIGDY NIE\n\n❌ Sumuj `unit_price` bez `quantity`\n❌ Licz wiersze jako faktury (`COUNT(*)`)\n❌ Używaj `=` zamiast `ILIKE`\n❌ Zmyślaj danych\n❌ Zaokrąglaj bez groszy\n❌ Filtruj po `seller_name` gdy masz `invoice_number` (KRYTYCZNE!)\n❌ Dodawaj pytań follow-up\n❌ Odpowiadaj różnie na identyczne pytania\n❌ Pomijaj weryfikacji wariantów\n❌ Pokazuj wyników bez rozbicia\n\n---\n\n## ZAWSZE TAK\n\n✅ `COUNT(DISTINCT invoice_number)` dla faktur\n✅ `SUM(quantity * unit_price)` dla wartości\n✅ Pokazuj rozbicie (300 + 501 = 801)\n✅ Podawaj źródło (nr faktury/daty)\n✅ Używaj `ILIKE`\n✅ Weryfikuj przed odpowiedzią\n✅ Wykrywaj anomalie (qty>10k)\n✅ Wypisuj WSZYSTKIE warianty gdy >1\n✅ Filtruj TYLKO po `invoice_number` gdy go masz\n```\n"
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 3.1,
+        "position": [
+          -368,
+          -128
+        ],
+        "id": "01fe014a-5a3f-4a92-b204-ca4203677b86",
+        "name": "AI Agent"
+      },
+      {
+        "parameters": {
+          "model": {
+            "__rl": true,
+            "value": "gpt-4o",
+            "mode": "list",
+            "cachedResultName": "gpt-4o"
+          },
+          "builtInTools": {},
+          "options": {
+            "temperature": 0.1
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+        "typeVersion": 1.3,
+        "position": [
+          -400,
+          144
+        ],
+        "id": "786c6e89-6cb8-4621-878c-75e829b22b14",
+        "name": "OpenAI Chat Model1",
+        "credentials": {
+          "openAiApi": {
+            "id": "0PmreRG9VqAnmyU6",
+            "name": "WdrazajAI"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "select",
+          "schema": {
+            "__rl": true,
+            "value": "public",
+            "mode": "list",
+            "cachedResultName": "public"
+          },
+          "table": {
+            "__rl": true,
+            "value": "Invoices",
+            "mode": "list",
+            "cachedResultName": "Invoices"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.postgresTool",
+        "typeVersion": 2.6,
+        "position": [
+          -128,
+          144
+        ],
+        "id": "29c458f8-9e7e-4840-8b13-79f3cb872e7f",
+        "name": "Select rows from a table in Postgres",
+        "credentials": {
+          "postgres": {
+            "id": "lLX02OsOiRk6uDc8",
+            "name": "WdrazajAI_Invoices: Postgres account"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+        "typeVersion": 1.3,
+        "position": [
+          -256,
+          144
+        ],
+        "id": "79b8b656-c8f5-412b-bd11-e75bfdaf56e5",
+        "name": "Simple Memory"
+      }
+    ],
+    "connections": {
+      "When chat message received": {
+        "main": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenAI Chat Model1": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Select rows from a table in Postgres": {
+        "ai_tool": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Simple Memory": {
+        "ai_memory": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_memory",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1",
+      "callerPolicy": "workflowsFromSameOwner",
+      "availableInMCP": false
+    },
+    "staticData": null,
+    "meta": null,
+    "pinData": null,
+    "versionId": "a684baf0-c406-45bd-94f6-f8fc4e618d81",
+    "activeVersionId": null,
+    "triggerCount": 0,
+    "shared": [
+      {
+        "updatedAt": "2026-01-20T10:45:45.593Z",
+        "createdAt": "2026-01-20T10:45:45.593Z",
+        "role": "workflow:owner",
+        "workflowId": "I1N493kNsm7wZXZR",
+        "projectId": "o1WWPwmeHKhHFopU"
+      }
+    ],
+    "activeVersion": null,
+    "tags": []
+  }
+}
