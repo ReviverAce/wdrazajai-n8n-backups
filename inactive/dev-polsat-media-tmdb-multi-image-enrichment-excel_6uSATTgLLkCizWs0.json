@@ -1,0 +1,488 @@
+{
+  "_backup_meta": {
+    "backed_up_at": "2026-03-01T12:45:15.646Z",
+    "n8n_instance": "https://wdrazajai.app.n8n.cloud",
+    "workflow_id": "6uSATTgLLkCizWs0",
+    "workflow_name": "[DEV] Polsat Media - TMDB Multi-Image Enrichment (Excel)",
+    "active": false,
+    "is_archived": false
+  },
+  "workflow": {
+    "updatedAt": "2026-02-14T09:52:28.696Z",
+    "createdAt": "2026-02-14T08:15:39.745Z",
+    "id": "6uSATTgLLkCizWs0",
+    "name": "[DEV] Polsat Media - TMDB Multi-Image Enrichment (Excel)",
+    "active": false,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {
+          "resource": "worksheet",
+          "operation": "readRows",
+          "workbook": {
+            "__rl": true,
+            "value": "=419EF2E7ECD42B7D!s8d3a66a8072f4e6a9aa9ba8cc374ddf4",
+            "mode": "id"
+          },
+          "worksheet": {
+            "__rl": true,
+            "value": "{00000000-0001-0000-0000-000000000000}",
+            "mode": "list",
+            "cachedResultName": "Arkusz1"
+          },
+          "options": {}
+        },
+        "id": "excel-read-rows",
+        "name": "Excel: Read All Rows",
+        "type": "n8n-nodes-base.microsoftExcel",
+        "typeVersion": 2.2,
+        "position": [
+          256,
+          0
+        ],
+        "credentials": {
+          "microsoftExcelOAuth2Api": {
+            "id": "1FSFGNdFPLQdMeMT",
+            "name": "[WAI] MICROSOFT EXCEL - MAIN"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "url1-empty",
+                "leftValue": "={{ $json[\"URL 1\"] }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "string",
+                  "operation": "empty"
+                }
+              }
+            ],
+            "combinator": "or"
+          },
+          "options": {}
+        },
+        "id": "filter-empty-url",
+        "name": "Filter Empty URL 1",
+        "type": "n8n-nodes-base.filter",
+        "typeVersion": 2.2,
+        "position": [
+          480,
+          0
+        ]
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "id": "loop-over-items",
+        "name": "Loop Over Items",
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          704,
+          0
+        ]
+      },
+      {
+        "parameters": {
+          "url": "https://api.themoviedb.org/3/search/movie",
+          "sendQuery": true,
+          "queryParameters": {
+            "parameters": [
+              {
+                "name": "api_key",
+                "value": "92362566bdaf5c0210d0e4c5fcab8657"
+              },
+              {
+                "name": "query",
+                "value": "={{ $json[\"Tytuły filmów\"] }}"
+              },
+              {
+                "name": "year",
+                "value": "={{ $json[\"Rok\"] || $json[\"Rok \"] }}"
+              },
+              {
+                "name": "language",
+                "value": "pl-PL"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "tmdb-search",
+        "name": "TMDB Search Movie",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          928,
+          0
+        ]
+      },
+      {
+        "parameters": {
+          "jsCode": "const searchResults = $input.first().json;\nconst originalData = $('Loop Over Items').first().json;\n\n// Helper: get field value with trimmed key lookup (handles Excel trailing spaces)\nfunction getField(name) {\n  if (originalData[name] !== undefined) return originalData[name];\n  const key = Object.keys(originalData).find(k => k.trim() === name);\n  return key ? originalData[key] : undefined;\n}\n\nconst queryTitle = (getField(\"Tytuły filmów\") || '').trim().toLowerCase();\nconst inputYear = parseInt(getField(\"Rok\"));\n\nif (!searchResults.results || searchResults.results.length === 0) {\n  return {\n    json: {\n      movieId: null,\n      movieTitle: null,\n      originalData: originalData,\n      movieFound: false\n    }\n  };\n}\n\nconst results = searchResults.results;\n\nfunction getYear(movie) {\n  if (!movie.release_date) return null;\n  return parseInt(movie.release_date.substring(0, 4));\n}\n\n// Priority 1: Exact title + exact year\nlet match = results.find(m =>\n  m.title.trim().toLowerCase() === queryTitle && getYear(m) === inputYear\n);\n\n// Priority 2: Exact title + year +/-1\nif (!match) {\n  match = results.find(m =>\n    m.title.trim().toLowerCase() === queryTitle &&\n    getYear(m) !== null && Math.abs(getYear(m) - inputYear) <= 1\n  );\n}\n\n// Priority 3: Title starts with query + exact year\nif (!match) {\n  match = results.find(m =>\n    m.title.trim().toLowerCase().startsWith(queryTitle) && getYear(m) === inputYear\n  );\n}\n\n// Priority 4: Any result with exact year match\nif (!match) {\n  match = results.find(m => getYear(m) === inputYear);\n}\n\n// Priority 5: First result (fallback when year matching fails)\nif (!match && results.length > 0) {\n  match = results[0];\n}\n\n// No suitable match\nif (!match) {\n  return {\n    json: {\n      movieId: null,\n      movieTitle: null,\n      originalData: originalData,\n      movieFound: false\n    }\n  };\n}\n\nreturn {\n  json: {\n    movieId: match.id,\n    movieTitle: match.title,\n    originalData: originalData,\n    movieFound: true\n  }\n};"
+        },
+        "id": "extract-movie-id",
+        "name": "Extract Movie ID",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1152,
+          0
+        ]
+      },
+      {
+        "parameters": {
+          "url": "=https://api.themoviedb.org/3/movie/{{ $json.movieId }}/images",
+          "sendQuery": true,
+          "queryParameters": {
+            "parameters": [
+              {
+                "name": "api_key",
+                "value": "92362566bdaf5c0210d0e4c5fcab8657"
+              },
+              {
+                "name": "include_image_language",
+                "value": "pl,null"
+              }
+            ]
+          },
+          "options": {
+            "response": {
+              "response": {
+                "neverError": true
+              }
+            }
+          }
+        },
+        "id": "tmdb-get-images",
+        "name": "TMDB Get Images",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          1376,
+          0
+        ]
+      },
+      {
+        "parameters": {
+          "jsCode": "const imagesResponse = $input.first().json;\nconst extractData = $('Extract Movie ID').first().json;\nconst originalData = extractData.originalData;\n\nconst BASE_URL = 'https://image.tmdb.org/t/p/';\nconst BACKDROP_SIZE = 'w1280';\nconst POSTER_SIZE = 'w500';\n\n// Wrap URL in Excel HYPERLINK formula for clickable links\nfunction hyperlink(url, label) {\n  if (!url) return '';\n  return '=HYPERLINK(\"' + url + '\", \"' + label + '\")';\n}\n\nif (!extractData.movieFound || !imagesResponse.backdrops) {\n  return {\n    json: {\n      ...originalData,\n      'URL 1': 'NOT FOUND',\n      'URL 2': '', 'URL 3': '', 'URL 4': '', 'URL 5': '',\n      'URL 6': '', 'URL 7': '', 'URL 8': '', 'URL 9': '', 'URL 10': ''\n    }\n  };\n}\n\nconst backdrops = imagesResponse.backdrops || [];\nconst posters = imagesResponse.posters || [];\n\nconst cleanBackdrops = backdrops.filter(img =>\n  img.iso_639_1 === null || img.iso_639_1 === 'pl'\n);\nconst cleanPosters = posters.filter(img =>\n  img.iso_639_1 === 'pl' || img.iso_639_1 === null\n);\n\nfunction scorePoster(img) {\n  let score = 0;\n  if (img.iso_639_1 === 'pl') score += 1000;\n  if (img.iso_639_1 === null) score += 500;\n  score += (img.vote_average || 0) * 10;\n  score += Math.min(img.vote_count || 0, 100);\n  return score;\n}\n\nfunction scoreBackdrop(img) {\n  let score = 0;\n  if (img.iso_639_1 === null) score += 1000;\n  if (img.iso_639_1 === 'pl') score += 500;\n  score += (img.vote_average || 0) * 10;\n  score += Math.min(img.vote_count || 0, 100);\n  return score;\n}\n\nconst scoredPosters = cleanPosters\n  .map(img => ({ ...img, score: scorePoster(img), fullUrl: `${BASE_URL}${POSTER_SIZE}${img.file_path}` }))\n  .sort((a, b) => b.score - a.score);\nconst firstPoster = scoredPosters[0]?.fullUrl || '';\n\nconst scoredBackdrops = cleanBackdrops\n  .map(img => ({ ...img, score: scoreBackdrop(img), fullUrl: `${BASE_URL}${BACKDROP_SIZE}${img.file_path}` }))\n  .sort((a, b) => b.score - a.score);\n\nconst total = scoredBackdrops.length;\nconst stride = Math.max(1, Math.floor(total / 9));\nconst selectedBackdrops = [];\nfor (let i = 0; i < 9 && i * stride < total; i++) {\n  selectedBackdrops.push(scoredBackdrops[i * stride]);\n}\n\nreturn {\n  json: {\n    ...originalData,\n    'URL 1': firstPoster ? hyperlink(firstPoster, 'Poster') : 'NOT FOUND',\n    'URL 2': selectedBackdrops[0] ? hyperlink(selectedBackdrops[0].fullUrl, 'Backdrop 1') : '',\n    'URL 3': selectedBackdrops[1] ? hyperlink(selectedBackdrops[1].fullUrl, 'Backdrop 2') : '',\n    'URL 4': selectedBackdrops[2] ? hyperlink(selectedBackdrops[2].fullUrl, 'Backdrop 3') : '',\n    'URL 5': selectedBackdrops[3] ? hyperlink(selectedBackdrops[3].fullUrl, 'Backdrop 4') : '',\n    'URL 6': selectedBackdrops[4] ? hyperlink(selectedBackdrops[4].fullUrl, 'Backdrop 5') : '',\n    'URL 7': selectedBackdrops[5] ? hyperlink(selectedBackdrops[5].fullUrl, 'Backdrop 6') : '',\n    'URL 8': selectedBackdrops[6] ? hyperlink(selectedBackdrops[6].fullUrl, 'Backdrop 7') : '',\n    'URL 9': selectedBackdrops[7] ? hyperlink(selectedBackdrops[7].fullUrl, 'Backdrop 8') : '',\n    'URL 10': selectedBackdrops[8] ? hyperlink(selectedBackdrops[8].fullUrl, 'Backdrop 9') : ''\n  }\n};"
+        },
+        "id": "process-images",
+        "name": "Process Images",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1600,
+          0
+        ]
+      },
+      {
+        "parameters": {
+          "resource": "worksheet",
+          "operation": "upsert",
+          "workbook": {
+            "__rl": true,
+            "value": "=419EF2E7ECD42B7D!s8d3a66a8072f4e6a9aa9ba8cc374ddf4",
+            "mode": "id"
+          },
+          "worksheet": {
+            "__rl": true,
+            "value": "{00000000-0001-0000-0000-000000000000}",
+            "mode": "list",
+            "cachedResultName": "Arkusz1"
+          },
+          "dataMode": "autoMap",
+          "columnToMatchOn": "Tytuły filmów",
+          "options": {}
+        },
+        "id": "excel-update-row",
+        "name": "Excel: Update Row",
+        "type": "n8n-nodes-base.microsoftExcel",
+        "typeVersion": 2.2,
+        "position": [
+          1824,
+          80
+        ],
+        "credentials": {
+          "microsoftExcelOAuth2Api": {
+            "id": "1FSFGNdFPLQdMeMT",
+            "name": "[WAI] MICROSOFT EXCEL - MAIN"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "al-1",
+                "name": "project_name",
+                "value": "[DEV] Polsat Media - TMDB Multi-Image Enrichment (Excel)",
+                "type": "string"
+              },
+              {
+                "id": "al-2",
+                "name": "workflow_name",
+                "value": "={{ $workflow.name }}",
+                "type": "string"
+              },
+              {
+                "id": "al-3",
+                "name": "execution_id",
+                "value": "={{ $execution.id }}",
+                "type": "string"
+              },
+              {
+                "id": "al-4",
+                "name": "execution_url",
+                "value": "={{ 'https://wdrazajai.app.n8n.cloud/workflow/' + $workflow.id + '/executions/' + $execution.id }}",
+                "type": "string"
+              },
+              {
+                "id": "al-5",
+                "name": "status",
+                "value": "success",
+                "type": "string"
+              },
+              {
+                "id": "al-6",
+                "name": "error_message",
+                "value": "",
+                "type": "string"
+              },
+              {
+                "id": "al-7",
+                "name": "time_saved_minutes",
+                "value": "=5",
+                "type": "number"
+              },
+              {
+                "id": "al-8",
+                "name": "metadata",
+                "value": "={{ JSON.stringify({ items_processed: $itemIndex + 1, timestamp: $now.toISO() }) }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "prepare-logs",
+        "name": "Prepare for automation_logs",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          928,
+          -192
+        ]
+      },
+      {
+        "parameters": {},
+        "id": "limit-1",
+        "name": "Limit1",
+        "type": "n8n-nodes-base.limit",
+        "typeVersion": 1,
+        "position": [
+          1152,
+          -192
+        ]
+      },
+      {
+        "parameters": {
+          "tableId": "automation_logs",
+          "dataToSend": "autoMapInputData"
+        },
+        "id": "log-to-supabase",
+        "name": "Log to automation_logs",
+        "type": "n8n-nodes-base.supabase",
+        "typeVersion": 1,
+        "position": [
+          1376,
+          -192
+        ],
+        "credentials": {
+          "supabaseApi": {
+            "id": "pDckhjeF4Smhrova",
+            "name": "[WAI] SUPABASE - RAG"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          64,
+          0
+        ],
+        "id": "8521c3f7-26db-4d97-b87a-982067f52b6c",
+        "name": "When clicking ‘Execute workflow’"
+      }
+    ],
+    "connections": {
+      "Excel: Read All Rows": {
+        "main": [
+          [
+            {
+              "node": "Filter Empty URL 1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Filter Empty URL 1": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Loop Over Items": {
+        "main": [
+          [
+            {
+              "node": "Prepare for automation_logs",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "TMDB Search Movie",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "TMDB Search Movie": {
+        "main": [
+          [
+            {
+              "node": "Extract Movie ID",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Extract Movie ID": {
+        "main": [
+          [
+            {
+              "node": "TMDB Get Images",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "TMDB Get Images": {
+        "main": [
+          [
+            {
+              "node": "Process Images",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Process Images": {
+        "main": [
+          [
+            {
+              "node": "Excel: Update Row",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Excel: Update Row": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Prepare for automation_logs": {
+        "main": [
+          [
+            {
+              "node": "Limit1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Limit1": {
+        "main": [
+          [
+            {
+              "node": "Log to automation_logs",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "When clicking ‘Execute workflow’": {
+        "main": [
+          [
+            {
+              "node": "Excel: Read All Rows",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1",
+      "errorWorkflow": "qbOSaENwdtXKQhbo",
+      "callerPolicy": "workflowsFromSameOwner",
+      "availableInMCP": false
+    },
+    "staticData": null,
+    "meta": {
+      "templateCredsSetupCompleted": true
+    },
+    "pinData": {},
+    "versionId": "3f298cc0-1467-408a-8d1e-e76b19a5e3b5",
+    "activeVersionId": null,
+    "triggerCount": 0,
+    "shared": [
+      {
+        "updatedAt": "2026-02-14T08:19:34.377Z",
+        "createdAt": "2026-02-14T08:19:34.377Z",
+        "role": "workflow:owner",
+        "workflowId": "6uSATTgLLkCizWs0",
+        "projectId": "2jlhRfElT6lOiXuI"
+      }
+    ],
+    "activeVersion": null,
+    "tags": []
+  }
+}
