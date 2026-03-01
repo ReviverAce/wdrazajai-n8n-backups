@@ -1,0 +1,1476 @@
+{
+  "_backup_meta": {
+    "backed_up_at": "2026-03-01T12:45:15.687Z",
+    "n8n_instance": "https://wdrazajai.app.n8n.cloud",
+    "workflow_id": "ugTgITQjGFcf5Blt",
+    "workflow_name": "RAG Template",
+    "active": false,
+    "is_archived": false
+  },
+  "workflow": {
+    "updatedAt": "2025-11-25T12:54:48.000Z",
+    "createdAt": "2025-10-13T18:41:04.609Z",
+    "id": "ugTgITQjGFcf5Blt",
+    "name": "RAG Template",
+    "active": false,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {},
+        "type": "@n8n/n8n-nodes-langchain.rerankerCohere",
+        "typeVersion": 1,
+        "position": [
+          704,
+          -2352
+        ],
+        "id": "492d80a1-dd97-48a8-8e4e-589274f18c83",
+        "name": "Reranker Cohere",
+        "credentials": {
+          "cohereApi": {
+            "id": "0v9njzuttnfpK83n",
+            "name": "CohereApi account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "mode": "retrieve-as-tool",
+          "toolDescription": "Use this tool to search the database",
+          "tableName": {
+            "__rl": true,
+            "value": "documents",
+            "mode": "list",
+            "cachedResultName": "documents"
+          },
+          "topK": 20,
+          "useReranker": true,
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+        "typeVersion": 1.3,
+        "position": [
+          464,
+          -2512
+        ],
+        "id": "b3e4593b-99f7-43ab-8acd-da3105d02746",
+        "name": "Supabase Vector Store",
+        "credentials": {
+          "supabaseApi": {
+            "id": "VbxtQsunhJ7qCGei",
+            "name": "Supabase account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "content": "# RAG Agent\n",
+          "height": 380,
+          "width": 764,
+          "color": 4
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          -480,
+          -2624
+        ],
+        "id": "051daa9d-1c08-4167-8966-b7abfb8c55d1",
+        "name": "Sticky Note1"
+      },
+      {
+        "parameters": {
+          "content": "## Vector Store\n",
+          "height": 380,
+          "width": 604,
+          "color": 5
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          288,
+          -2624
+        ],
+        "id": "3a68d1f5-82f5-4dcd-94bf-28662632a52d",
+        "name": "Sticky Note2"
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+        "typeVersion": 1.2,
+        "position": [
+          384,
+          -2352
+        ],
+        "id": "6a58506b-2eb5-4492-b3fa-0c96e481fa2c",
+        "name": "Embeddings OpenAI",
+        "credentials": {
+          "openAiApi": {
+            "id": "0PmreRG9VqAnmyU6",
+            "name": "WdrazajAI"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "options": {
+            "systemMessage": "=You are a helpful and friendly AI assistant for our company. Your primary goal is to assist users by answering their questions based on a knowledge base, but you should also be able to handle simple conversation. You have access to the Supabase tool. Always call on this tool to answer questions if the user is asking for information.\n\nFirst, analyze the user's message to determine their intent.\n\n**Behavior 1: If the user's message is a simple greeting, thank you, or other conversational filler (e.g., \"hello\", \"thanks!\", \"how are you?\").**\n- You should respond politely and conversationally.\n- Do NOT use the provided [CONTEXT].\n- Do NOT mention the documents or your knowledge base.\n\n**Behavior 2: If the user's message is a question asking for information, instructions, or specific details.**\n- You must switch to your role as a specialized knowledge base assistant and follow these strict rules:\n1.  **Analyze the Context:** Carefully read the provided [CONTEXT] section. This is your only source of truth.\n2.  **Answer the Question:** Formulate a direct and concise answer to the [QUESTION] using only the information from the [CONTEXT].\n3.  **Strictly Adhere to Context:** Do NOT use any external knowledge, make assumptions, or fill in gaps.\n4.  **Handling Insufficient Information:** If the answer cannot be found within the [CONTEXT], you must respond with the exact phrase: \"I could not find an answer in the provided documents.\" Do not apologize or offer to search elsewhere.\n5.  **Cite Your Sources:** After your answer, add a \"Sources:\" section. List the title of each source document you used. Use the metadata provided in the context to format each source as a clickable Markdown link.\n\n**[CONTEXT]**\n{context_from_retriever}\n**[/CONTEXT]**\n\n**[QUESTION]**\n{user_question}\n**[/QUESTION]**"
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 2,
+        "position": [
+          -224,
+          -2560
+        ],
+        "id": "b4dd5290-a410-4b25-a495-8cee6f2b6cfb",
+        "name": "RAG Agent"
+      },
+      {
+        "parameters": {
+          "pollTimes": {
+            "item": [
+              {
+                "mode": "everyMinute"
+              }
+            ]
+          },
+          "triggerOn": "specificFolder",
+          "folderToWatch": {
+            "__rl": true,
+            "value": "1S_XSwz1z3EH4Cnivl7Ls_RGTqlO7L0bb",
+            "mode": "list",
+            "cachedResultName": "1) RAG Demo",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/1S_XSwz1z3EH4Cnivl7Ls_RGTqlO7L0bb"
+          },
+          "event": "fileCreated",
+          "options": {}
+        },
+        "id": "b8ce34c6-10e6-478e-90e1-7edc53e740a7",
+        "name": "File Created",
+        "type": "n8n-nodes-base.googleDriveTrigger",
+        "typeVersion": 1,
+        "position": [
+          -704,
+          -2208
+        ],
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "K8AhyJxzvT955TRk",
+            "name": "Google Drive account"
+          }
+        },
+        "disabled": true
+      },
+      {
+        "parameters": {
+          "pollTimes": {
+            "item": [
+              {
+                "mode": "everyMinute"
+              }
+            ]
+          },
+          "triggerOn": "specificFolder",
+          "folderToWatch": {
+            "__rl": true,
+            "value": "1S_XSwz1z3EH4Cnivl7Ls_RGTqlO7L0bb",
+            "mode": "list",
+            "cachedResultName": "1) RAG Demo",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/1S_XSwz1z3EH4Cnivl7Ls_RGTqlO7L0bb"
+          },
+          "event": "fileUpdated",
+          "options": {}
+        },
+        "id": "bf16bf97-3085-4557-859f-250a099de6e7",
+        "name": "File Updated",
+        "type": "n8n-nodes-base.googleDriveTrigger",
+        "typeVersion": 1,
+        "position": [
+          -576,
+          -1968
+        ],
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "TzGbHKnjytdXTibB",
+            "name": "WDRAZAJ_AI_CREDENTIALS"
+          }
+        },
+        "disabled": true
+      },
+      {
+        "parameters": {
+          "operation": "text",
+          "options": {}
+        },
+        "id": "e9149eab-316d-4e15-9bc5-4e3dcdc8180b",
+        "name": "Extract Document Text",
+        "type": "n8n-nodes-base.extractFromFile",
+        "typeVersion": 1,
+        "position": [
+          624,
+          -1952
+        ],
+        "alwaysOutputData": true
+      },
+      {
+        "parameters": {
+          "operation": "delete",
+          "tableId": "documents",
+          "filterType": "string",
+          "filterString": "=metadata->>file_id=like.*{{ $json.file_id }}*"
+        },
+        "id": "2c99a689-9ca7-4066-8ad5-e71327eaadda",
+        "name": "Delete Old Doc Rows",
+        "type": "n8n-nodes-base.supabase",
+        "typeVersion": 1,
+        "position": [
+          -176,
+          -1856
+        ],
+        "alwaysOutputData": true,
+        "credentials": {
+          "supabaseApi": {
+            "id": "VbxtQsunhJ7qCGei",
+            "name": "Supabase account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "ea0df693-30be-4a54-9688-540426d32ec7",
+                "name": "file_id",
+                "value": "={{ $json.id }}",
+                "type": "string"
+              },
+              {
+                "id": "6abd2229-f192-46ae-b92c-8b92f5c325a2",
+                "name": "file_type",
+                "value": "={{ $json.mimeType }}",
+                "type": "string"
+              },
+              {
+                "id": "8449bf76-3d65-4d5d-a767-5cd6b3c3fa3d",
+                "name": "file_title",
+                "value": "={{ $json.name }}",
+                "type": "string"
+              },
+              {
+                "id": "97ab5c10-a1e1-47ea-b2ed-a85afda33be7",
+                "name": "file_url",
+                "value": "={{ $json.webViewLink }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "04a92cc3-fdb2-4499-aade-ace3cdd5eb63",
+        "name": "Set File ID",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          -16,
+          -2112
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "pdf",
+          "options": {}
+        },
+        "id": "280851d8-8631-483c-9f6a-7a0284fbe27f",
+        "name": "Extract PDF Text",
+        "type": "n8n-nodes-base.extractFromFile",
+        "typeVersion": 1,
+        "position": [
+          624,
+          -2096
+        ]
+      },
+      {
+        "parameters": {
+          "chunkSize": 750,
+          "chunkOverlap": 200
+        },
+        "id": "9ffb2a4b-eb4e-4128-a9ac-19ae312b0369",
+        "name": "Character Text Splitter",
+        "type": "@n8n/n8n-nodes-langchain.textSplitterCharacterTextSplitter",
+        "typeVersion": 1,
+        "position": [
+          1248,
+          -1408
+        ]
+      },
+      {
+        "parameters": {
+          "rules": {
+            "values": [
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 1
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $('Set File ID').item.json.file_type }}",
+                      "rightValue": "application/pdf",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      },
+                      "id": "2f324207-c6c9-4ab5-8faa-6d5a8852d824"
+                    }
+                  ],
+                  "combinator": "and"
+                }
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 1
+                  },
+                  "conditions": [
+                    {
+                      "id": "b69f5605-0179-4b02-9a32-e34bb085f82d",
+                      "leftValue": "={{ $('Set File ID').item.json.file_type }}",
+                      "rightValue": "application/vnd.google-apps.document",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                }
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 1
+                  },
+                  "conditions": [
+                    {
+                      "id": "4b66bd92-408e-4ef3-b896-91d9d3cc6396",
+                      "leftValue": "={{ $('Set File ID').item.json.file_type }}",
+                      "rightValue": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                }
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 1
+                  },
+                  "conditions": [
+                    {
+                      "id": "41f2cae0-a01c-4fbb-b9c2-483b950a12e6",
+                      "leftValue": "={{ $('Set File ID').item.json.file_type }}",
+                      "rightValue": "text/plain",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                }
+              }
+            ]
+          },
+          "options": {
+            "fallbackOutput": 3
+          }
+        },
+        "id": "63146ca1-ec92-47c3-80d9-7f8cfe2a9f6e",
+        "name": "Switch",
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3,
+        "position": [
+          336,
+          -1920
+        ]
+      },
+      {
+        "parameters": {
+          "mode": "insert",
+          "tableName": {
+            "__rl": true,
+            "value": "documents",
+            "mode": "list",
+            "cachedResultName": "documents"
+          },
+          "options": {
+            "queryName": "match_documents"
+          }
+        },
+        "id": "b07f450c-5cd8-4b55-9f6b-26771b31f263",
+        "name": "Insert into Supabase Vectorstore",
+        "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+        "typeVersion": 1,
+        "position": [
+          1232,
+          -1856
+        ],
+        "notesInFlow": false,
+        "credentials": {
+          "supabaseApi": {
+            "id": "VbxtQsunhJ7qCGei",
+            "name": "Supabase account"
+          }
+        },
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "options": {
+            "reset": false
+          }
+        },
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          -336,
+          -2144
+        ],
+        "id": "758f477e-d238-4d89-9e6c-4cebb8de7b5a",
+        "name": "Loop Over Items"
+      },
+      {
+        "parameters": {
+          "operation": "upsert",
+          "schema": {
+            "__rl": true,
+            "mode": "list",
+            "value": "public"
+          },
+          "table": {
+            "__rl": true,
+            "value": "document_metadata",
+            "mode": "list",
+            "cachedResultName": "document_metadata"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "id": "={{ $('Set File ID').item.json.file_id }}",
+              "title": "={{ $('Set File ID').item.json.file_title }}",
+              "url": "={{ $('Set File ID').item.json.file_url }}"
+            },
+            "matchingColumns": [
+              "id"
+            ],
+            "schema": [
+              {
+                "id": "id",
+                "displayName": "id",
+                "required": true,
+                "defaultMatch": true,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "title",
+                "displayName": "title",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": false
+              },
+              {
+                "id": "url",
+                "displayName": "url",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": false,
+                "removed": false
+              },
+              {
+                "id": "created_at",
+                "displayName": "created_at",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "dateTime",
+                "canBeUsedToMatch": false,
+                "removed": true
+              },
+              {
+                "id": "schema",
+                "displayName": "schema",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": false,
+                "removed": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          0,
+          -1856
+        ],
+        "id": "64de2c2c-4ec8-43de-b391-430356ab343e",
+        "name": "Insert Document Metadata",
+        "executeOnce": true,
+        "credentials": {
+          "postgres": {
+            "id": "iHkhsyWzijnwNLca",
+            "name": "Postgres account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsonMode": "expressionData",
+          "jsonData": "={{ $json.data || $json.text || $json.concatenated_data }}",
+          "options": {
+            "metadata": {
+              "metadataValues": [
+                {
+                  "name": "=file_id",
+                  "value": "={{ $('Set File ID').first().json.file_id }}"
+                },
+                {
+                  "name": "file_title",
+                  "value": "={{ $('Set File ID').first().json.file_title }}"
+                },
+                {
+                  "name": "url",
+                  "value": "={{ $('Set File ID').first().json.file_url }}"
+                }
+              ]
+            }
+          }
+        },
+        "id": "e277fc29-f364-4b74-90e8-a6e8e6a0e2e2",
+        "name": "Default Data Loader1",
+        "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+        "typeVersion": 1,
+        "position": [
+          1264,
+          -1552
+        ]
+      },
+      {
+        "parameters": {
+          "model": "text-embedding-3-small",
+          "options": {}
+        },
+        "id": "4719e1e2-4796-42f8-ad26-ab22cfd9e0cb",
+        "name": "Embeddings OpenAI3",
+        "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+        "typeVersion": 1,
+        "position": [
+          1120,
+          -1584
+        ],
+        "credentials": {
+          "openAiApi": {
+            "id": "0PmreRG9VqAnmyU6",
+            "name": "WdrazajAI"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "model": {
+            "__rl": true,
+            "mode": "list",
+            "value": "gpt-4.1-mini"
+          },
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+        "typeVersion": 1.2,
+        "position": [
+          -384,
+          -2368
+        ],
+        "id": "2613a30d-aae3-47ba-ba98-092270feeeb0",
+        "name": "OpenAI Chat Model",
+        "credentials": {
+          "openAiApi": {
+            "id": "0PmreRG9VqAnmyU6",
+            "name": "WdrazajAI"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "content": "## RAG Ingestion System",
+          "height": 960,
+          "width": 2880,
+          "color": 3
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          -1232,
+          -2240
+        ],
+        "id": "0bfa66b9-a38b-4b83-bdc3-3aa12e10e8aa",
+        "name": "Sticky Note"
+      },
+      {
+        "parameters": {
+          "resource": "fileFolder",
+          "searchMethod": "query",
+          "queryString": "'1FKXMeb9IaScJ-B5TfHIhkeY--5jOgtIY' in parents and trashed=false",
+          "returnAll": true,
+          "filter": {},
+          "options": {
+            "fields": [
+              "id"
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          64,
+          -1168
+        ],
+        "id": "e2279094-ce11-40cc-9d39-f495e68a477f",
+        "name": "Get File IDs",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "TzGbHKnjytdXTibB",
+            "name": "WDRAZAJ_AI_CREDENTIALS"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.merge",
+        "typeVersion": 3,
+        "position": [
+          336,
+          -1088
+        ],
+        "id": "e736121d-65b4-44e9-9dab-079bad2f3825",
+        "name": "Merge"
+      },
+      {
+        "parameters": {
+          "operation": "getAll",
+          "tableId": "documents",
+          "returnAll": true
+        },
+        "type": "n8n-nodes-base.supabase",
+        "typeVersion": 1,
+        "position": [
+          64,
+          -1008
+        ],
+        "id": "c327c59d-bfc1-4e00-8e46-62025b50ccbc",
+        "name": "Supabase",
+        "credentials": {
+          "supabaseApi": {
+            "id": "VbxtQsunhJ7qCGei",
+            "name": "Supabase account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "// Grab the raw data from all inputs\nconst inputData = $input.all().map(item => item.json);\n\n// Separate out the Google Drive items (no \"metadata\") vs. Supabase items (have \"metadata\")\nconst googleDriveItems = inputData.filter(item => item.id && !item.metadata);\nconst supabaseItems = inputData.filter(item => item.metadata);\n\n// Extract just the file IDs from Google Drive\nconst googleDriveIds = googleDriveItems.map(item => item.id);\n\n// Build a Set for quick membership checks (recommended for large arrays)\nconst driveIdSet = new Set(googleDriveIds);\n\n// Filter Supabase rows to find those whose file_id is not in the Drive set\nconst orphanedSupabaseRows = supabaseItems.filter(item => {\n  return !driveIdSet.has(item.metadata.file_id);\n});\n\n// Return each orphaned row as a separate n8n item\nreturn orphanedSupabaseRows.map(row => ({ json: row }));\n"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          560,
+          -1088
+        ],
+        "id": "1a4986e7-faf9-447b-9439-148643ccb751",
+        "name": "Code1"
+      },
+      {
+        "parameters": {
+          "rule": {
+            "interval": [
+              {}
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          -240,
+          -832
+        ],
+        "id": "b9cedc1c-06a0-47c5-9bdb-0f43b7f2519f",
+        "name": "Schedule Trigger",
+        "disabled": true
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          -1136,
+          -2048
+        ],
+        "id": "b3baee9a-6516-41b0-bce0-269644d18bc0",
+        "name": "When clicking ‘Test workflow’"
+      },
+      {
+        "parameters": {
+          "operation": "delete",
+          "tableId": "documents",
+          "matchType": "allFilters",
+          "filters": {
+            "conditions": [
+              {
+                "keyName": "id",
+                "condition": "eq",
+                "keyValue": "={{ $json.id }}"
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.supabase",
+        "typeVersion": 1,
+        "position": [
+          784,
+          -1088
+        ],
+        "id": "16524f68-9cad-454a-8de3-a85b81a817f1",
+        "name": "Delete Rows",
+        "credentials": {
+          "supabaseApi": {
+            "id": "VbxtQsunhJ7qCGei",
+            "name": "Supabase account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "content": "## RAG: Clean up",
+          "height": 956,
+          "width": 1440,
+          "color": 6
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          -384,
+          -1280
+        ],
+        "id": "a58062b0-da28-4011-ae51-523644b2d5e3",
+        "name": "Sticky Note5"
+      },
+      {
+        "parameters": {
+          "resource": "fileFolder",
+          "searchMethod": "query",
+          "queryString": "'1FKXMeb9IaScJ-B5TfHIhkeY--5jOgtIY' in parents and trashed=false",
+          "returnAll": true,
+          "filter": {},
+          "options": {
+            "fields": [
+              "id"
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          64,
+          -768
+        ],
+        "id": "034a9728-9462-4ce0-8e62-1e0c08f49089",
+        "name": "Get File IDs2",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "TzGbHKnjytdXTibB",
+            "name": "WDRAZAJ_AI_CREDENTIALS"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "getAll",
+          "tableId": "document_metadata",
+          "returnAll": true
+        },
+        "type": "n8n-nodes-base.supabase",
+        "typeVersion": 1,
+        "position": [
+          64,
+          -544
+        ],
+        "id": "00ba7865-3293-4690-8bf7-5dc6d457ff77",
+        "name": "Supabase2",
+        "credentials": {
+          "supabaseApi": {
+            "id": "VbxtQsunhJ7qCGei",
+            "name": "Supabase account"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.merge",
+        "typeVersion": 3,
+        "position": [
+          352,
+          -688
+        ],
+        "id": "20510d3e-7ffe-4268-9b7a-6cd1138ce6aa",
+        "name": "Merge2"
+      },
+      {
+        "parameters": {
+          "jsCode": "// Simple code to handle empty Google Drive\n\n// Determine if we have Google Drive data\nlet hasDriveData = false;\nlet driveFileIds = new Set();\n\n// Check the first item to see if it's a Google Drive file or a file list\nif (items[0] && items[0].json) {\n  // Is it a files array?\n  if (items[0].json.files && Array.isArray(items[0].json.files)) {\n    hasDriveData = true;\n    for (const file of items[0].json.files) {\n      if (file && file.id) driveFileIds.add(file.id);\n    }\n  }\n  // Is it a single file with no metadata-like properties?\n  else if (items[0].json.id && !items[0].json.title && !items[0].json.created_at) {\n    hasDriveData = true;\n    driveFileIds.add(items[0].json.id);\n  }\n}\n\nconsole.log(\"Has Drive data:\", hasDriveData);\nconsole.log(\"Drive file IDs:\", Array.from(driveFileIds));\n\n// Determine which items are metadata records\nlet metadataRecords = [];\n\n// If the first item looks like a metadata record (has title, url, created_at)\nif (!hasDriveData) {\n  // All items are metadata records\n  metadataRecords = items.map(item => item.json).filter(Boolean);\n  console.log(\"All items are metadata records:\", metadataRecords.length);\n} else {\n  // Only items after the first are metadata records\n  metadataRecords = items.slice(1).map(item => item.json).filter(Boolean);\n  console.log(\"Items after first are metadata records:\", metadataRecords.length);\n}\n\n// If there are no Drive files, mark all metadata records for deletion\nconst recordsToDelete = [];\n\nif (driveFileIds.size === 0) {\n  console.log(\"No Drive files, marking ALL metadata records for deletion\");\n  for (const record of metadataRecords) {\n    if (record && record.id) {\n      recordsToDelete.push({\n        ...record,\n        _shouldDelete: true\n      });\n    }\n  }\n} else {\n  // Otherwise, only mark records not in Drive\n  console.log(\"Checking metadata records against Drive files\");\n  for (const record of metadataRecords) {\n    if (record && record.id && !driveFileIds.has(record.id)) {\n      recordsToDelete.push({\n        ...record,\n        _shouldDelete: true\n      });\n    }\n  }\n}\n\nconsole.log(\"Records to delete:\", recordsToDelete.length);\nreturn recordsToDelete;"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          576,
+          -688
+        ],
+        "id": "eb842341-2c23-48a4-854c-10d96e2a55b7",
+        "name": "Code2"
+      },
+      {
+        "parameters": {
+          "operation": "delete",
+          "tableId": "document_metadata",
+          "matchType": "allFilters",
+          "filters": {
+            "conditions": [
+              {
+                "keyName": "id",
+                "condition": "eq",
+                "keyValue": "={{ $json.id }}"
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.supabase",
+        "typeVersion": 1,
+        "position": [
+          816,
+          -688
+        ],
+        "id": "f682adc9-e511-4918-92da-3b3b8eecb7ab",
+        "name": "Delete Rows2",
+        "credentials": {
+          "supabaseApi": {
+            "id": "VbxtQsunhJ7qCGei",
+            "name": "Supabase account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "resource": "fileFolder",
+          "searchMethod": "query",
+          "queryString": "='1uYVWp6bf2NiWH8tP3qhkFRFqJHC7iwNF' in parents and trashed=false",
+          "filter": {},
+          "options": {
+            "fields": [
+              "webViewLink",
+              "id",
+              "name",
+              "mimeType"
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          -848,
+          -2048
+        ],
+        "id": "7b2517f2-bf6a-4357-985c-f068205fc25b",
+        "name": "Search files and folders",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "TzGbHKnjytdXTibB",
+            "name": "WDRAZAJ_AI_CREDENTIALS"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+        "typeVersion": 1.3,
+        "position": [
+          -208,
+          -2384
+        ],
+        "id": "cd2b4bc2-090d-4342-b74f-ea5cbbf6146a",
+        "name": "Postgres Chat Memory",
+        "credentials": {
+          "postgres": {
+            "id": "iHkhsyWzijnwNLca",
+            "name": "Postgres account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+        "typeVersion": 1.1,
+        "position": [
+          -448,
+          -2560
+        ],
+        "id": "0ba8a8ea-6aa7-4121-afd8-954fdce319d5",
+        "name": "When chat message received",
+        "webhookId": "d105c3ad-3488-438c-b405-b856c90ce80e"
+      },
+      {
+        "parameters": {
+          "operation": "download",
+          "fileId": {
+            "__rl": true,
+            "value": "={{ $('Set File ID').item.json.file_id }}",
+            "mode": "id"
+          },
+          "options": {
+            "googleFileConversion": {
+              "conversion": {
+                "docsToFormat": "text/plain"
+              }
+            }
+          }
+        },
+        "id": "b7b87328-6564-4de4-900f-fbc1ee29f132",
+        "name": "Download_file",
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          176,
+          -1856
+        ],
+        "executeOnce": true,
+        "retryOnFail": true,
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "TzGbHKnjytdXTibB",
+            "name": "WDRAZAJ_AI_CREDENTIALS"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "xlsx",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.extractFromFile",
+        "typeVersion": 1,
+        "position": [
+          624,
+          -1808
+        ],
+        "id": "74d175eb-c16e-4a47-96b2-76254fdc04f8",
+        "name": "Extract from File"
+      },
+      {
+        "parameters": {
+          "operation": "text",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.extractFromFile",
+        "typeVersion": 1,
+        "position": [
+          624,
+          -1632
+        ],
+        "id": "db0af2ec-db91-40d2-8f0e-295e19d67a06",
+        "name": "Extract from Text"
+      },
+      {
+        "parameters": {
+          "aggregate": "aggregateAllItemData",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.aggregate",
+        "typeVersion": 1,
+        "position": [
+          832,
+          -1808
+        ],
+        "id": "d814e170-30d2-4269-ad63-3a523634e2e3",
+        "name": "Aggregate"
+      }
+    ],
+    "connections": {
+      "Reranker Cohere": {
+        "ai_reranker": [
+          [
+            {
+              "node": "Supabase Vector Store",
+              "type": "ai_reranker",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Supabase Vector Store": {
+        "ai_tool": [
+          [
+            {
+              "node": "RAG Agent",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Embeddings OpenAI": {
+        "ai_embedding": [
+          [
+            {
+              "node": "Supabase Vector Store",
+              "type": "ai_embedding",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "File Created": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "File Updated": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Extract Document Text": {
+        "main": [
+          [
+            {
+              "node": "Insert into Supabase Vectorstore",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Delete Old Doc Rows": {
+        "main": [
+          [
+            {
+              "node": "Insert Document Metadata",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Set File ID": {
+        "main": [
+          [
+            {
+              "node": "Delete Old Doc Rows",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Extract PDF Text": {
+        "main": [
+          [
+            {
+              "node": "Insert into Supabase Vectorstore",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Character Text Splitter": {
+        "ai_textSplitter": [
+          [
+            {
+              "node": "Default Data Loader1",
+              "type": "ai_textSplitter",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Switch": {
+        "main": [
+          [
+            {
+              "node": "Extract PDF Text",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Extract Document Text",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Extract from File",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Extract from Text",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Insert into Supabase Vectorstore": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Loop Over Items": {
+        "main": [
+          [],
+          [
+            {
+              "node": "Set File ID",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Insert Document Metadata": {
+        "main": [
+          [
+            {
+              "node": "Download_file",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Default Data Loader1": {
+        "ai_document": [
+          [
+            {
+              "node": "Insert into Supabase Vectorstore",
+              "type": "ai_document",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Embeddings OpenAI3": {
+        "ai_embedding": [
+          [
+            {
+              "node": "Insert into Supabase Vectorstore",
+              "type": "ai_embedding",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenAI Chat Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "RAG Agent",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get File IDs": {
+        "main": [
+          [
+            {
+              "node": "Merge",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Merge": {
+        "main": [
+          [
+            {
+              "node": "Code1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Supabase": {
+        "main": [
+          [
+            {
+              "node": "Merge",
+              "type": "main",
+              "index": 1
+            }
+          ]
+        ]
+      },
+      "Code1": {
+        "main": [
+          [
+            {
+              "node": "Delete Rows",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "When clicking ‘Test workflow’": {
+        "main": [
+          [
+            {
+              "node": "Search files and folders",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get File IDs2": {
+        "main": [
+          [
+            {
+              "node": "Merge2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Supabase2": {
+        "main": [
+          [
+            {
+              "node": "Merge2",
+              "type": "main",
+              "index": 1
+            }
+          ]
+        ]
+      },
+      "Merge2": {
+        "main": [
+          [
+            {
+              "node": "Code2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Code2": {
+        "main": [
+          [
+            {
+              "node": "Delete Rows2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Search files and folders": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Postgres Chat Memory": {
+        "ai_memory": [
+          [
+            {
+              "node": "RAG Agent",
+              "type": "ai_memory",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Schedule Trigger": {
+        "main": [
+          [
+            {
+              "node": "Get File IDs",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Supabase",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Get File IDs2",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Supabase2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "When chat message received": {
+        "main": [
+          [
+            {
+              "node": "RAG Agent",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Download_file": {
+        "main": [
+          [
+            {
+              "node": "Switch",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Extract from File": {
+        "main": [
+          [
+            {
+              "node": "Aggregate",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Extract from Text": {
+        "main": [
+          [
+            {
+              "node": "Insert into Supabase Vectorstore",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Aggregate": {
+        "main": [
+          [
+            {
+              "node": "Insert into Supabase Vectorstore",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "staticData": null,
+    "meta": {
+      "templateCredsSetupCompleted": true
+    },
+    "pinData": {},
+    "versionId": "4699d842-1b4a-4e4a-90d4-9c7efc824074",
+    "activeVersionId": null,
+    "triggerCount": 0,
+    "shared": [
+      {
+        "updatedAt": "2025-10-13T18:41:04.614Z",
+        "createdAt": "2025-10-13T18:41:04.614Z",
+        "role": "workflow:owner",
+        "workflowId": "ugTgITQjGFcf5Blt",
+        "projectId": "2jlhRfElT6lOiXuI"
+      }
+    ],
+    "activeVersion": null,
+    "tags": []
+  }
+}
