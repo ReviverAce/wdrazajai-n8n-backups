@@ -1,6 +1,6 @@
 {
   "_backup_meta": {
-    "backed_up_at": "2026-03-01T12:43:51.246Z",
+    "backed_up_at": "2026-03-01T13:16:47.276Z",
     "n8n_instance": "https://wdrazajai.app.n8n.cloud",
     "workflow_id": "ExsN8c9VSMc5g3q9FM2xW",
     "workflow_name": "[PROD] WAI - SUPABASE HEARTBEAT",
@@ -12,7 +12,6 @@
     "createdAt": "2026-01-28T13:05:41.678Z",
     "id": "ExsN8c9VSMc5g3q9FM2xW",
     "name": "[PROD] WAI - SUPABASE HEARTBEAT",
-    "description": null,
     "active": true,
     "isArchived": false,
     "nodes": [
@@ -194,7 +193,6 @@
     "pinData": {},
     "versionId": "508c2974-96f2-421c-beba-2762dae78ad9",
     "activeVersionId": "508c2974-96f2-421c-beba-2762dae78ad9",
-    "versionCounter": 27,
     "triggerCount": 1,
     "shared": [
       {
@@ -202,23 +200,9 @@
         "createdAt": "2026-01-28T13:05:41.685Z",
         "role": "workflow:owner",
         "workflowId": "ExsN8c9VSMc5g3q9FM2xW",
-        "projectId": "2jlhRfElT6lOiXuI",
-        "project": {
-          "updatedAt": "2025-10-12T12:56:30.000Z",
-          "createdAt": "2025-09-29T16:03:35.874Z",
-          "id": "2jlhRfElT6lOiXuI",
-          "name": "WdrazajAI",
-          "type": "team",
-          "icon": {
-            "type": "icon",
-            "value": "layers"
-          },
-          "description": "",
-          "creatorId": null
-        }
+        "projectId": "2jlhRfElT6lOiXuI"
       }
     ],
-    "tags": [],
     "activeVersion": {
       "updatedAt": "2026-02-25T14:18:13.000Z",
       "createdAt": "2026-02-25T14:18:10.032Z",
@@ -389,25 +373,8 @@
       "authors": "Wdrazaj AI",
       "name": "Version 508c2974",
       "description": "",
-      "autosaved": true,
-      "workflowPublishHistory": [
-        {
-          "createdAt": "2026-02-25T14:18:13.497Z",
-          "id": 179,
-          "workflowId": "ExsN8c9VSMc5g3q9FM2xW",
-          "versionId": "508c2974-96f2-421c-beba-2762dae78ad9",
-          "event": "activated",
-          "userId": "119a69e3-20ac-49b7-97c9-7bb364d43633"
-        },
-        {
-          "createdAt": "2026-02-25T14:22:03.938Z",
-          "id": 181,
-          "workflowId": "ExsN8c9VSMc5g3q9FM2xW",
-          "versionId": "508c2974-96f2-421c-beba-2762dae78ad9",
-          "event": "activated",
-          "userId": "119a69e3-20ac-49b7-97c9-7bb364d43633"
-        }
-      ]
-    }
+      "autosaved": true
+    },
+    "tags": []
   }
 }
