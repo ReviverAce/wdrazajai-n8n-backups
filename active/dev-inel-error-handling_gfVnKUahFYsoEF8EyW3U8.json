@@ -1,0 +1,641 @@
+{
+  "_backup_meta": {
+    "backed_up_at": "2026-03-01T12:45:15.680Z",
+    "n8n_instance": "https://wdrazajai.app.n8n.cloud",
+    "workflow_id": "gfVnKUahFYsoEF8EyW3U8",
+    "workflow_name": "[DEV] INEL - ERROR HANDLING",
+    "active": true,
+    "is_archived": false
+  },
+  "workflow": {
+    "updatedAt": "2026-02-13T02:48:26.139Z",
+    "createdAt": "2026-01-23T16:25:18.776Z",
+    "id": "gfVnKUahFYsoEF8EyW3U8",
+    "name": "[DEV] INEL - ERROR HANDLING",
+    "active": true,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {},
+        "id": "475c17d6-4cbd-4046-a2bc-7383d0f4634f",
+        "name": "Error Trigger",
+        "type": "n8n-nodes-base.errorTrigger",
+        "typeVersion": 1,
+        "position": [
+          -704,
+          144
+        ]
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "al-1",
+                "name": "project_name",
+                "value": "INEL",
+                "type": "string"
+              },
+              {
+                "id": "al-2",
+                "name": "workflow_name",
+                "value": "={{ $json.workflow.name }}",
+                "type": "string"
+              },
+              {
+                "id": "al-3",
+                "name": "execution_id",
+                "value": "={{ $json.execution.id }}",
+                "type": "string"
+              },
+              {
+                "id": "al-4",
+                "name": "execution_url",
+                "value": "={{ $json.execution.url }}",
+                "type": "string"
+              },
+              {
+                "id": "al-5",
+                "name": "status",
+                "value": "error",
+                "type": "string"
+              },
+              {
+                "id": "al-6",
+                "name": "error_message",
+                "value": "={{ $json.execution.error.message }}",
+                "type": "string"
+              },
+              {
+                "id": "al-7",
+                "name": "time_saved_minutes",
+                "value": "=0",
+                "type": "number"
+              },
+              {
+                "id": "al-8",
+                "name": "metadata",
+                "value": "={{ JSON.stringify({ node_name: $json.execution.lastNodeExecuted, workflow_id: $json.workflow.id, timestamp: $now.toISO() }) }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "eb92f24f-6327-4735-a751-78619dcda03a",
+        "name": "Prepare for automation_logs",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          -480,
+          144
+        ]
+      },
+      {
+        "parameters": {
+          "tableId": "automation_logs",
+          "dataToSend": "autoMapInputData"
+        },
+        "id": "2a0caedf-24ac-4d8d-bc24-fe5eb9b7fd65",
+        "name": "Log to automation_logs",
+        "type": "n8n-nodes-base.supabase",
+        "typeVersion": 1,
+        "position": [
+          -256,
+          144
+        ],
+        "credentials": {
+          "supabaseApi": {
+            "id": "LyBj0lWVGeJXEyUf",
+            "name": "[INEL] SUPABASE - MAIN"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://wdrazajai.app.n8n.cloud/webhook/support-check",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ JSON.stringify({ api_key: \"ba7a542a-ffa2-47b6-ac4f-9f0f6c6c43c8\" }) }}",
+          "options": {}
+        },
+        "id": "df81bc6c-b2b7-455c-a0e7-835d1adb05e0",
+        "name": "Check Support Status",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          -32,
+          144
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "version": 2,
+              "leftValue": "",
+              "caseSensitive": true,
+              "typeValidation": "strict"
+            },
+            "combinator": "and",
+            "conditions": [
+              {
+                "id": "cond-1",
+                "operator": {
+                  "type": "boolean",
+                  "operation": "true",
+                  "singleValue": true
+                },
+                "leftValue": "={{ $json.support_active }}",
+                "rightValue": ""
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "98b12eb9-5763-4d4f-8e07-da8797cdfb52",
+        "name": "IF Support Active",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          192,
+          144
+        ]
+      },
+      {
+        "parameters": {
+          "sendTo": "info@wdrazaj.ai",
+          "subject": "=[n8n Error] {{ $('Prepare for automation_logs').item.json.workflow_name }}",
+          "message": "=<h2>Workflow Error Alert</h2>\n<p><strong>Project:</strong> {{ $('Prepare for automation_logs').item.json.project_name }}</p>\n<p><strong>Workflow:</strong> {{ $('Prepare for automation_logs').item.json.workflow_name }}</p>\n<p><strong>Error:</strong> {{ $('Prepare for automation_logs').item.json.error_message }}</p>\n<p><a href=\"{{ $('Prepare for automation_logs').item.json.execution_url }}\">View Execution Details</a></p>",
+          "options": {}
+        },
+        "id": "4b59fb19-e3d4-4a3f-a51f-84cda5a08b83",
+        "name": "Send WdrazajAI Email Notification",
+        "type": "n8n-nodes-base.gmail",
+        "typeVersion": 2.2,
+        "position": [
+          432,
+          16
+        ],
+        "webhookId": "9c4c0c56-1cd9-428b-b487-ea71dc166922",
+        "credentials": {
+          "gmailOAuth2": {
+            "id": "OFVvKTJMK5GQYalJ",
+            "name": "[WAI] GMAIL - raphelmarke@gmail.com"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "sendTo": "INEL@wdrazaj.ai",
+          "subject": "=[n8n Error] {{ $('Prepare for automation_logs').item.json.workflow_name }} cleint path",
+          "message": "=<h2>Workflow Error Alert</h2>\n<p><strong>Project:</strong> {{ $('Prepare for automation_logs').item.json.project_name }}</p>\n<p><strong>Workflow:</strong> {{ $('Prepare for automation_logs').item.json.workflow_name }}</p>\n<p><strong>Error:</strong> {{ $('Prepare for automation_logs').item.json.error_message }}</p>\n<p><a href=\"{{ $('Prepare for automation_logs').item.json.execution_url }}\">View Execution Details</a></p>",
+          "options": {}
+        },
+        "id": "3296452e-c5fb-47bb-8cb9-ecf54f6f19ec",
+        "name": "Send Client Email Notification1",
+        "type": "n8n-nodes-base.gmail",
+        "typeVersion": 2.2,
+        "position": [
+          432,
+          224
+        ],
+        "webhookId": "9c4c0c56-1cd9-428b-b487-ea71dc166922",
+        "credentials": {
+          "gmailOAuth2": {
+            "id": "6mWEDEEBMOCi0uCb",
+            "name": "[WAI] GMAIL - MAIN 2"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Error Trigger": {
+        "main": [
+          [
+            {
+              "node": "Prepare for automation_logs",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Prepare for automation_logs": {
+        "main": [
+          [
+            {
+              "node": "Log to automation_logs",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Log to automation_logs": {
+        "main": [
+          [
+            {
+              "node": "Check Support Status",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Check Support Status": {
+        "main": [
+          [
+            {
+              "node": "IF Support Active",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "IF Support Active": {
+        "main": [
+          [
+            {
+              "node": "Send WdrazajAI Email Notification",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Send Client Email Notification1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1",
+      "availableInMCP": false,
+      "callerPolicy": "workflowsFromSameOwner",
+      "timeSavedMode": "fixed",
+      "errorWorkflow": "qbOSaENwdtXKQhbo"
+    },
+    "staticData": null,
+    "meta": {
+      "templateCredsSetupCompleted": true
+    },
+    "pinData": {
+      "Error Trigger": [
+        {
+          "json": {
+            "execution": {
+              "id": "4679",
+              "url": "https://wdrazajai.app.n8n.cloud/workflow/ExsN8c9VSMc5g3q9FM2xW/executions/4679",
+              "error": {
+                "level": "info",
+                "shouldReport": false,
+                "description": "Please make sure that the credential is shared with the project \"WdrazajAI\"",
+                "tags": {},
+                "node": {
+                  "parameters": {
+                    "useCustomSchema": false,
+                    "resource": "row",
+                    "operation": "getAll",
+                    "tableId": "automation_logs",
+                    "returnAll": false,
+                    "limit": 1,
+                    "filterType": "manual",
+                    "matchType": "anyFilter",
+                    "filters": {}
+                  },
+                  "id": "supabase-keepalive",
+                  "name": "Supabase Keep-Alive",
+                  "type": "n8n-nodes-base.supabase",
+                  "typeVersion": 1,
+                  "position": [
+                    512,
+                    304
+                  ],
+                  "credentials": {
+                    "supabaseApi": {
+                      "id": "jlhy4KbLGkqXChQ5",
+                      "name": "[WAI] SUPABASE - MAIN"
+                    }
+                  }
+                },
+                "project": {
+                  "updatedAt": "2025-10-12T12:56:30.000Z",
+                  "createdAt": "2025-09-29T16:03:35.874Z",
+                  "id": "2jlhRfElT6lOiXuI",
+                  "name": "WdrazajAI",
+                  "type": "team",
+                  "icon": {
+                    "type": "icon",
+                    "value": "layers"
+                  },
+                  "description": "",
+                  "creatorId": null
+                },
+                "message": "Node \"Supabase Keep-Alive\" does not have access to the credential",
+                "stack": "Error: Node \"Supabase Keep-Alive\" does not have access to the credential\n    at CredentialsPermissionChecker.check (/usr/local/lib/node_modules/n8n/src/executions/pre-execution-checks/credentials-permission-checker.ts:76:11)\n    at WorkflowRunner.run (/usr/local/lib/node_modules/n8n/src/workflow-runner.ts:147:4)\n    at WorkflowExecutionService.runWorkflow (/usr/local/lib/node_modules/n8n/src/workflows/workflow-execution.service.ts:86:10)"
+              },
+              "lastNodeExecuted": "Supabase Keep-Alive",
+              "mode": "trigger"
+            },
+            "workflow": {
+              "id": "ExsN8c9VSMc5g3q9FM2xW",
+              "name": "[DEV] INEL - SUPABASE HEARTBEAT"
+            }
+          },
+          "pairedItem": {
+            "item": 0
+          }
+        }
+      ]
+    },
+    "versionId": "3334946c-cf59-4ad8-9b6c-a9356a331775",
+    "activeVersionId": "7744aeb6-d957-49b3-94ae-cc7ad2ae76e4",
+    "triggerCount": 0,
+    "shared": [
+      {
+        "updatedAt": "2026-01-23T16:25:18.781Z",
+        "createdAt": "2026-01-23T16:25:18.781Z",
+        "role": "workflow:owner",
+        "workflowId": "gfVnKUahFYsoEF8EyW3U8",
+        "projectId": "2jlhRfElT6lOiXuI"
+      }
+    ],
+    "activeVersion": {
+      "updatedAt": "2026-01-28T14:02:18.000Z",
+      "createdAt": "2026-01-28T14:01:11.985Z",
+      "versionId": "7744aeb6-d957-49b3-94ae-cc7ad2ae76e4",
+      "workflowId": "gfVnKUahFYsoEF8EyW3U8",
+      "nodes": [
+        {
+          "parameters": {},
+          "id": "error-trigger",
+          "name": "Error Trigger",
+          "type": "n8n-nodes-base.errorTrigger",
+          "typeVersion": 1,
+          "position": [
+            0,
+            96
+          ]
+        },
+        {
+          "parameters": {
+            "assignments": {
+              "assignments": [
+                {
+                  "id": "al-1",
+                  "name": "project_name",
+                  "value": "papa_raphael",
+                  "type": "string"
+                },
+                {
+                  "id": "al-2",
+                  "name": "workflow_name",
+                  "value": "={{ $json.workflow.name }}",
+                  "type": "string"
+                },
+                {
+                  "id": "al-3",
+                  "name": "execution_id",
+                  "value": "={{ $json.execution.id }}",
+                  "type": "string"
+                },
+                {
+                  "id": "al-4",
+                  "name": "execution_url",
+                  "value": "={{ $json.execution.url }}",
+                  "type": "string"
+                },
+                {
+                  "id": "al-5",
+                  "name": "status",
+                  "value": "error",
+                  "type": "string"
+                },
+                {
+                  "id": "al-6",
+                  "name": "error_message",
+                  "value": "={{ $json.execution.error.message }}",
+                  "type": "string"
+                },
+                {
+                  "id": "al-7",
+                  "name": "time_saved_minutes",
+                  "value": "=0",
+                  "type": "number"
+                },
+                {
+                  "id": "al-8",
+                  "name": "metadata",
+                  "value": "={{ JSON.stringify({ node_name: $json.execution.lastNodeExecuted, workflow_id: $json.workflow.id, timestamp: $now.toISO() }) }}",
+                  "type": "string"
+                }
+              ]
+            },
+            "options": {}
+          },
+          "id": "edit-fields",
+          "name": "Prepare for automation_logs",
+          "type": "n8n-nodes-base.set",
+          "typeVersion": 3.4,
+          "position": [
+            224,
+            96
+          ]
+        },
+        {
+          "parameters": {
+            "tableId": "automation_logs",
+            "dataToSend": "autoMapInputData"
+          },
+          "id": "supabase-automation-logs",
+          "name": "Log to automation_logs",
+          "type": "n8n-nodes-base.supabase",
+          "typeVersion": 1,
+          "position": [
+            448,
+            96
+          ],
+          "credentials": {
+            "supabaseApi": {
+              "id": "jlhy4KbLGkqXChQ5",
+              "name": "Invoice_supabase_creds"
+            }
+          }
+        },
+        {
+          "parameters": {
+            "method": "POST",
+            "url": "https://wdrazajai.app.n8n.cloud/webhook/support-check",
+            "sendBody": true,
+            "specifyBody": "json",
+            "jsonBody": "={{ JSON.stringify({ api_key: \"ba7a542a-ffa2-47b6-ac4f-9f0f6c6c43c8\" }) }}",
+            "options": {}
+          },
+          "id": "http-check-support",
+          "name": "Check Support Status",
+          "type": "n8n-nodes-base.httpRequest",
+          "typeVersion": 4.2,
+          "position": [
+            672,
+            96
+          ]
+        },
+        {
+          "parameters": {
+            "conditions": {
+              "options": {
+                "version": 2,
+                "leftValue": "",
+                "caseSensitive": true,
+                "typeValidation": "strict"
+              },
+              "combinator": "and",
+              "conditions": [
+                {
+                  "id": "cond-1",
+                  "operator": {
+                    "type": "boolean",
+                    "operation": "true",
+                    "singleValue": true
+                  },
+                  "leftValue": "={{ $json.support_active }}",
+                  "rightValue": ""
+                }
+              ]
+            },
+            "options": {}
+          },
+          "id": "if-support-active",
+          "name": "IF Support Active",
+          "type": "n8n-nodes-base.if",
+          "typeVersion": 2.2,
+          "position": [
+            896,
+            96
+          ]
+        },
+        {
+          "parameters": {
+            "sendTo": "info@wdrazaj.ai",
+            "subject": "=[n8n Error] {{ $('Prepare for automation_logs').item.json.workflow_name }}",
+            "message": "=<h2>Workflow Error Alert</h2>\n<p><strong>Project:</strong> {{ $('Prepare for automation_logs').item.json.project_name }}</p>\n<p><strong>Workflow:</strong> {{ $('Prepare for automation_logs').item.json.workflow_name }}</p>\n<p><strong>Error:</strong> {{ $('Prepare for automation_logs').item.json.error_message }}</p>\n<p><a href=\"{{ $('Prepare for automation_logs').item.json.execution_url }}\">View Execution Details</a></p>",
+            "options": {}
+          },
+          "id": "gmail-notify",
+          "name": "Send WdrazajAI Email Notification",
+          "type": "n8n-nodes-base.gmail",
+          "typeVersion": 2.2,
+          "position": [
+            1136,
+            -32
+          ],
+          "webhookId": "9c4c0c56-1cd9-428b-b487-ea71dc166922",
+          "credentials": {
+            "gmailOAuth2": {
+              "id": "OFVvKTJMK5GQYalJ",
+              "name": "Gmail info@wdrazaj.ai"
+            }
+          }
+        },
+        {
+          "parameters": {
+            "sendTo": "info@wdrazaj.ai",
+            "subject": "=[n8n Error] {{ $('Prepare for automation_logs').item.json.workflow_name }} cleint path",
+            "message": "=<h2>Workflow Error Alert</h2>\n<p><strong>Project:</strong> {{ $('Prepare for automation_logs').item.json.project_name }}</p>\n<p><strong>Workflow:</strong> {{ $('Prepare for automation_logs').item.json.workflow_name }}</p>\n<p><strong>Error:</strong> {{ $('Prepare for automation_logs').item.json.error_message }}</p>\n<p><a href=\"{{ $('Prepare for automation_logs').item.json.execution_url }}\">View Execution Details</a></p>",
+            "options": {}
+          },
+          "id": "0a36cc42-81d0-4ff4-bb0f-d67c91fe5c02",
+          "name": "Send Client Email Notification1",
+          "type": "n8n-nodes-base.gmail",
+          "typeVersion": 2.2,
+          "position": [
+            1136,
+            176
+          ],
+          "webhookId": "9c4c0c56-1cd9-428b-b487-ea71dc166922",
+          "credentials": {
+            "gmailOAuth2": {
+              "id": "OFVvKTJMK5GQYalJ",
+              "name": "Gmail info@wdrazaj.ai"
+            }
+          }
+        }
+      ],
+      "connections": {
+        "Error Trigger": {
+          "main": [
+            [
+              {
+                "node": "Prepare for automation_logs",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Prepare for automation_logs": {
+          "main": [
+            [
+              {
+                "node": "Log to automation_logs",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Log to automation_logs": {
+          "main": [
+            [
+              {
+                "node": "Check Support Status",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Check Support Status": {
+          "main": [
+            [
+              {
+                "node": "IF Support Active",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "IF Support Active": {
+          "main": [
+            [
+              {
+                "node": "Send WdrazajAI Email Notification",
+                "type": "main",
+                "index": 0
+              }
+            ],
+            [
+              {
+                "node": "Send Client Email Notification1",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        }
+      },
+      "authors": "Wdrazaj AI",
+      "name": "Version 7744aeb6",
+      "description": "",
+      "autosaved": false
+    },
+    "tags": []
+  }
+}
