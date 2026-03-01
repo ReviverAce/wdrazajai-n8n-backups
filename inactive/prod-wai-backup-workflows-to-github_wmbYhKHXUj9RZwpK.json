@@ -1,6 +1,6 @@
 {
   "_backup_meta": {
-    "backed_up_at": "2026-03-01T12:45:15.692Z",
+    "backed_up_at": "2026-03-01T13:16:47.326Z",
     "n8n_instance": "https://wdrazajai.app.n8n.cloud",
     "workflow_id": "wmbYhKHXUj9RZwpK",
     "workflow_name": "[PROD] WAI - Backup Workflows to GitHub",
@@ -8,7 +8,7 @@
     "is_archived": false
   },
   "workflow": {
-    "updatedAt": "2026-03-01T12:44:16.100Z",
+    "updatedAt": "2026-03-01T13:15:27.230Z",
     "createdAt": "2026-02-28T17:28:43.154Z",
     "id": "wmbYhKHXUj9RZwpK",
     "name": "[PROD] WAI - Backup Workflows to GitHub",
@@ -98,6 +98,7 @@
         "parameters": {
           "authentication": "oAuth2",
           "resource": "file",
+          "operation": "edit",
           "owner": {
             "__rl": true,
             "value": "WdrazajAI",
@@ -109,6 +110,7 @@
             "mode": "name"
           },
           "filePath": "={{ $json.filePath }}",
+          "binaryData": false,
           "fileContent": "={{ $json.fileContent }}",
           "commitMessage": "=chore: backup '{{ $json.workflowName }}' ({{ $json.workflowId }})",
           "additionalParameters": {
@@ -168,6 +170,7 @@
         "parameters": {
           "authentication": "oAuth2",
           "resource": "file",
+          "operation": "edit",
           "owner": {
             "__rl": true,
             "value": "WdrazajAI",
@@ -179,6 +182,7 @@
             "mode": "name"
           },
           "filePath": "_index.json",
+          "binaryData": false,
           "fileContent": "={{ $json.fileContent }}",
           "commitMessage": "=chore: update backup index ({{ $now.format('yyyy-MM-dd HH:mm') }} UTC)",
           "additionalParameters": {
@@ -349,7 +353,7 @@
     "staticData": null,
     "meta": null,
     "pinData": {},
-    "versionId": "8ae05b23-48b4-44ec-b292-0bf86a1bc606",
+    "versionId": "40e0ee57-136a-4159-ab7d-85d6ba76e2e6",
     "activeVersionId": null,
     "triggerCount": 0,
     "shared": [
