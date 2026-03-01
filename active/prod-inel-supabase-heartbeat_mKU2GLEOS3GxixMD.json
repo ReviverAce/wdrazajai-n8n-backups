@@ -1,0 +1,384 @@
+{
+  "_backup_meta": {
+    "backed_up_at": "2026-03-01T12:45:15.683Z",
+    "n8n_instance": "https://wdrazajai.app.n8n.cloud",
+    "workflow_id": "mKU2GLEOS3GxixMD",
+    "workflow_name": "[PROD] INEL - SUPABASE HEARTBEAT",
+    "active": true,
+    "is_archived": false
+  },
+  "workflow": {
+    "updatedAt": "2026-02-25T14:18:23.447Z",
+    "createdAt": "2026-02-09T12:55:50.836Z",
+    "id": "mKU2GLEOS3GxixMD",
+    "name": "[PROD] INEL - SUPABASE HEARTBEAT",
+    "active": true,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "daysInterval": 3
+              }
+            ]
+          }
+        },
+        "id": "baf2d311-7d68-45d7-96a5-a554cbb804d9",
+        "name": "Schedule Trigger",
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.3,
+        "position": [
+          256,
+          304
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "getAll",
+          "tableId": "automation_logs",
+          "limit": 1
+        },
+        "id": "c3c84517-be4d-420e-9ce5-9f65ea60ca0d",
+        "name": "Supabase Keep-Alive",
+        "type": "n8n-nodes-base.supabase",
+        "typeVersion": 1,
+        "position": [
+          512,
+          304
+        ],
+        "credentials": {
+          "supabaseApi": {
+            "id": "LyBj0lWVGeJXEyUf",
+            "name": "[INEL] SUPABASE - MAIN"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "al-1",
+                "name": "project_name",
+                "value": "INEL",
+                "type": "string"
+              },
+              {
+                "id": "al-2",
+                "name": "workflow_name",
+                "value": "={{ $workflow.name }}",
+                "type": "string"
+              },
+              {
+                "id": "al-3",
+                "name": "execution_id",
+                "value": "={{ $execution.id }}",
+                "type": "string"
+              },
+              {
+                "id": "al-4",
+                "name": "execution_url",
+                "value": "={{ 'https://wdrazajai.app.n8n.cloud/workflow/' + $workflow.id + '/executions/' + $execution.id }}",
+                "type": "string"
+              },
+              {
+                "id": "al-5",
+                "name": "status",
+                "value": "success",
+                "type": "string"
+              },
+              {
+                "id": "al-6",
+                "name": "error_message",
+                "value": "",
+                "type": "string"
+              },
+              {
+                "id": "al-7",
+                "name": "time_saved_minutes",
+                "value": "=",
+                "type": "number"
+              },
+              {
+                "id": "al-8",
+                "name": "metadata",
+                "value": "={{ JSON.stringify({ trigger: 'chat', timestamp: $now.toISO() }) }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "60747b27-4aa9-408a-816e-7b98c4e0d9b8",
+        "name": "Prepare for automation_logs",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          736,
+          304
+        ]
+      },
+      {
+        "parameters": {
+          "tableId": "automation_logs",
+          "dataToSend": "autoMapInputData"
+        },
+        "type": "n8n-nodes-base.supabase",
+        "typeVersion": 1,
+        "position": [
+          1008,
+          304
+        ],
+        "id": "dfc1e64f-358d-4a92-ac36-cb4fab9354a3",
+        "name": "Log to automation_logs",
+        "credentials": {
+          "supabaseApi": {
+            "id": "LyBj0lWVGeJXEyUf",
+            "name": "[INEL] SUPABASE - MAIN"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Schedule Trigger": {
+        "main": [
+          [
+            {
+              "node": "Supabase Keep-Alive",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Prepare for automation_logs": {
+        "main": [
+          [
+            {
+              "node": "Log to automation_logs",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Supabase Keep-Alive": {
+        "main": [
+          [
+            {
+              "node": "Prepare for automation_logs",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1",
+      "availableInMCP": false,
+      "callerPolicy": "workflowsFromSameOwner",
+      "timeSavedMode": "fixed",
+      "errorWorkflow": "vc8vc7Z6tuluzYVJ",
+      "binaryMode": "separate"
+    },
+    "staticData": {
+      "node:Schedule Trigger": {
+        "recurrenceRules": [
+          59
+        ]
+      }
+    },
+    "meta": {
+      "templateCredsSetupCompleted": true
+    },
+    "pinData": {},
+    "versionId": "06357ea3-ef71-445e-abf5-728c75324547",
+    "activeVersionId": "06357ea3-ef71-445e-abf5-728c75324547",
+    "triggerCount": 1,
+    "shared": [
+      {
+        "updatedAt": "2026-02-09T12:55:50.841Z",
+        "createdAt": "2026-02-09T12:55:50.841Z",
+        "role": "workflow:owner",
+        "workflowId": "mKU2GLEOS3GxixMD",
+        "projectId": "2jlhRfElT6lOiXuI"
+      }
+    ],
+    "activeVersion": {
+      "updatedAt": "2026-02-25T14:19:36.000Z",
+      "createdAt": "2026-02-25T14:18:23.448Z",
+      "versionId": "06357ea3-ef71-445e-abf5-728c75324547",
+      "workflowId": "mKU2GLEOS3GxixMD",
+      "nodes": [
+        {
+          "parameters": {
+            "rule": {
+              "interval": [
+                {
+                  "daysInterval": 3
+                }
+              ]
+            }
+          },
+          "id": "baf2d311-7d68-45d7-96a5-a554cbb804d9",
+          "name": "Schedule Trigger",
+          "type": "n8n-nodes-base.scheduleTrigger",
+          "typeVersion": 1.3,
+          "position": [
+            256,
+            304
+          ]
+        },
+        {
+          "parameters": {
+            "operation": "getAll",
+            "tableId": "automation_logs",
+            "limit": 1
+          },
+          "id": "c3c84517-be4d-420e-9ce5-9f65ea60ca0d",
+          "name": "Supabase Keep-Alive",
+          "type": "n8n-nodes-base.supabase",
+          "typeVersion": 1,
+          "position": [
+            512,
+            304
+          ],
+          "credentials": {
+            "supabaseApi": {
+              "id": "LyBj0lWVGeJXEyUf",
+              "name": "[INEL] SUPABASE - MAIN"
+            }
+          }
+        },
+        {
+          "parameters": {
+            "assignments": {
+              "assignments": [
+                {
+                  "id": "al-1",
+                  "name": "project_name",
+                  "value": "INEL",
+                  "type": "string"
+                },
+                {
+                  "id": "al-2",
+                  "name": "workflow_name",
+                  "value": "={{ $workflow.name }}",
+                  "type": "string"
+                },
+                {
+                  "id": "al-3",
+                  "name": "execution_id",
+                  "value": "={{ $execution.id }}",
+                  "type": "string"
+                },
+                {
+                  "id": "al-4",
+                  "name": "execution_url",
+                  "value": "={{ 'https://wdrazajai.app.n8n.cloud/workflow/' + $workflow.id + '/executions/' + $execution.id }}",
+                  "type": "string"
+                },
+                {
+                  "id": "al-5",
+                  "name": "status",
+                  "value": "success",
+                  "type": "string"
+                },
+                {
+                  "id": "al-6",
+                  "name": "error_message",
+                  "value": "",
+                  "type": "string"
+                },
+                {
+                  "id": "al-7",
+                  "name": "time_saved_minutes",
+                  "value": "=",
+                  "type": "number"
+                },
+                {
+                  "id": "al-8",
+                  "name": "metadata",
+                  "value": "={{ JSON.stringify({ trigger: 'chat', timestamp: $now.toISO() }) }}",
+                  "type": "string"
+                }
+              ]
+            },
+            "options": {}
+          },
+          "id": "60747b27-4aa9-408a-816e-7b98c4e0d9b8",
+          "name": "Prepare for automation_logs",
+          "type": "n8n-nodes-base.set",
+          "typeVersion": 3.4,
+          "position": [
+            736,
+            304
+          ]
+        },
+        {
+          "parameters": {
+            "tableId": "automation_logs",
+            "dataToSend": "autoMapInputData"
+          },
+          "type": "n8n-nodes-base.supabase",
+          "typeVersion": 1,
+          "position": [
+            1008,
+            304
+          ],
+          "id": "dfc1e64f-358d-4a92-ac36-cb4fab9354a3",
+          "name": "Log to automation_logs",
+          "credentials": {
+            "supabaseApi": {
+              "id": "LyBj0lWVGeJXEyUf",
+              "name": "[INEL] SUPABASE - MAIN"
+            }
+          }
+        }
+      ],
+      "connections": {
+        "Schedule Trigger": {
+          "main": [
+            [
+              {
+                "node": "Supabase Keep-Alive",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Prepare for automation_logs": {
+          "main": [
+            [
+              {
+                "node": "Log to automation_logs",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Supabase Keep-Alive": {
+          "main": [
+            [
+              {
+                "node": "Prepare for automation_logs",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        }
+      },
+      "authors": "Wdrazaj AI",
+      "name": "Version 06357ea3",
+      "description": "",
+      "autosaved": true
+    },
+    "tags": []
+  }
+}
