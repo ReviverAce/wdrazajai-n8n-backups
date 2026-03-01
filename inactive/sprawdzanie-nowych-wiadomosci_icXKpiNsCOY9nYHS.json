@@ -1,0 +1,359 @@
+{
+  "_backup_meta": {
+    "backed_up_at": "2026-03-01T12:45:15.682Z",
+    "n8n_instance": "https://wdrazajai.app.n8n.cloud",
+    "workflow_id": "icXKpiNsCOY9nYHS",
+    "workflow_name": "Sprawdzanie nowych wiadomosci",
+    "active": false,
+    "is_archived": false
+  },
+  "workflow": {
+    "updatedAt": "2025-12-04T08:26:35.000Z",
+    "createdAt": "2025-12-01T20:10:47.884Z",
+    "id": "icXKpiNsCOY9nYHS",
+    "name": "Sprawdzanie nowych wiadomosci",
+    "active": false,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "field": "seconds"
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.3,
+        "position": [
+          976,
+          496
+        ],
+        "id": "5b938e42-daba-407c-87bc-28bac10b8e1e",
+        "name": "Schedule Trigger"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "87efbdb5-3b41-4441-b27e-ca544cbea347",
+                "leftValue": "={{ $json.MessageID }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "string",
+                  "operation": "notEquals"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          1648,
+          496
+        ],
+        "id": "f131c4bf-569d-4530-b290-0b803c32fe11",
+        "name": "If"
+      },
+      {
+        "parameters": {
+          "documentId": {
+            "__rl": true,
+            "value": "1bUe4SQS8JLNzFx_n3rN5F7yGAEcze6LKVA0P5fS24tY",
+            "mode": "list",
+            "cachedResultName": "Kolejka Mirek",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1bUe4SQS8JLNzFx_n3rN5F7yGAEcze6LKVA0P5fS24tY/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": "gid=0",
+            "mode": "list",
+            "cachedResultName": "Arkusz1",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1bUe4SQS8JLNzFx_n3rN5F7yGAEcze6LKVA0P5fS24tY/edit#gid=0"
+          },
+          "filtersUI": {
+            "values": [
+              {
+                "lookupColumn": "Status",
+                "lookupValue": "nowy"
+              }
+            ]
+          },
+          "options": {
+            "returnFirstMatch": true
+          }
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.7,
+        "position": [
+          1200,
+          496
+        ],
+        "id": "81e7f645-add2-40cb-8692-df969fa4c196",
+        "name": "Get row(s) in sheet1",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "j57T557AR9sznfj8",
+            "name": "Google Sheets Rafi"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "documentId": {
+            "__rl": true,
+            "value": "1bUe4SQS8JLNzFx_n3rN5F7yGAEcze6LKVA0P5fS24tY",
+            "mode": "list",
+            "cachedResultName": "Kolejka Mirek",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1bUe4SQS8JLNzFx_n3rN5F7yGAEcze6LKVA0P5fS24tY/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": "gid=0",
+            "mode": "list",
+            "cachedResultName": "Arkusz1",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1bUe4SQS8JLNzFx_n3rN5F7yGAEcze6LKVA0P5fS24tY/edit#gid=0"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "MessageID": "={{ $json.MessageID }}",
+              "ThreadID": "={{ $json.ThreadID }}",
+              "Data": "={{ $json.Data }}",
+              "Nazwa klienta": "={{ $json['Nazwa klienta'] }}",
+              "Email": "={{ $json.Email }}",
+              "Temat": "={{ $json.Temat }}",
+              "Opis zamówienia": "={{ $json['Opis zamówienia'] }}",
+              "Status": "przetwarzany"
+            },
+            "matchingColumns": [
+              "MessageID"
+            ],
+            "schema": [
+              {
+                "id": "ThreadID",
+                "displayName": "ThreadID",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "MessageID",
+                "displayName": "MessageID",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Data",
+                "displayName": "Data",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Nazwa klienta",
+                "displayName": "Nazwa klienta",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Email",
+                "displayName": "Email",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Temat",
+                "displayName": "Temat",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Opis zamówienia",
+                "displayName": "Opis zamówienia",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Status",
+                "displayName": "Status",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "row_number",
+                "displayName": "row_number",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "number",
+                "canBeUsedToMatch": true,
+                "readOnly": true,
+                "removed": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.7,
+        "position": [
+          1424,
+          496
+        ],
+        "id": "0298ac70-7528-469b-8df0-767b42bc9b30",
+        "name": "Update row in sheet",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "j57T557AR9sznfj8",
+            "name": "Google Sheets Rafi"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://wdrazajai.app.n8n.cloud/webhook/f1254adc-1aa1-4ea6-80f7-56d20968fa5a",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ $json }}",
+          "options": {
+            "response": {
+              "response": {
+                "neverError": true,
+                "responseFormat": "json"
+              }
+            }
+          }
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          1872,
+          480
+        ],
+        "id": "c8e42c83-a8e2-4664-8093-762290859803",
+        "name": "HTTP Request1"
+      }
+    ],
+    "connections": {
+      "Schedule Trigger": {
+        "main": [
+          [
+            {
+              "node": "Get row(s) in sheet1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If": {
+        "main": [
+          [
+            {
+              "node": "HTTP Request1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get row(s) in sheet1": {
+        "main": [
+          [
+            {
+              "node": "Update row in sheet",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Update row in sheet": {
+        "main": [
+          [
+            {
+              "node": "If",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "staticData": {
+      "node:Schedule Trigger": {
+        "recurrenceRules": []
+      }
+    },
+    "meta": {
+      "templateCredsSetupCompleted": true
+    },
+    "pinData": {},
+    "versionId": "0c9cd558-7c16-4827-9c51-3feffe6fd9cf",
+    "activeVersionId": null,
+    "triggerCount": 1,
+    "shared": [
+      {
+        "updatedAt": "2025-12-01T20:10:47.888Z",
+        "createdAt": "2025-12-01T20:10:47.888Z",
+        "role": "workflow:owner",
+        "workflowId": "icXKpiNsCOY9nYHS",
+        "projectId": "2jlhRfElT6lOiXuI"
+      }
+    ],
+    "activeVersion": null,
+    "tags": []
+  }
+}
