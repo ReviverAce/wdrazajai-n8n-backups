@@ -1,6 +1,6 @@
 {
   "_backup_meta": {
-    "backed_up_at": "2026-03-01T13:16:47.275Z",
+    "backed_up_at": "2026-03-02T02:00:01.952Z",
     "n8n_instance": "https://wdrazajai.app.n8n.cloud",
     "workflow_id": "DR5yFwrBmGxVdbFr",
     "workflow_name": "[DEV] LinkedIn Topic Discovery",
@@ -8,7 +8,7 @@
     "is_archived": false
   },
   "workflow": {
-    "updatedAt": "2026-02-28T17:25:11.060Z",
+    "updatedAt": "2026-03-01T14:10:10.100Z",
     "createdAt": "2026-02-28T16:20:24.080Z",
     "id": "DR5yFwrBmGxVdbFr",
     "name": "[DEV] LinkedIn Topic Discovery",
@@ -32,7 +32,7 @@
         "typeVersion": 1.2,
         "position": [
           0,
-          0
+          64
         ]
       },
       {
@@ -45,7 +45,7 @@
         "type": "n8n-nodes-base.rssFeedRead",
         "typeVersion": 1,
         "position": [
-          304,
+          224,
           -608
         ],
         "onError": "continueRegularOutput"
@@ -60,8 +60,8 @@
         "type": "n8n-nodes-base.rssFeedRead",
         "typeVersion": 1,
         "position": [
-          304,
-          -432
+          224,
+          -416
         ],
         "onError": "continueRegularOutput"
       },
@@ -75,8 +75,8 @@
         "type": "n8n-nodes-base.rssFeedRead",
         "typeVersion": 1,
         "position": [
-          304,
-          -256
+          224,
+          -224
         ],
         "onError": "continueRegularOutput"
       },
@@ -90,8 +90,8 @@
         "type": "n8n-nodes-base.rssFeedRead",
         "typeVersion": 1,
         "position": [
-          304,
-          -96
+          224,
+          -32
         ],
         "onError": "continueRegularOutput"
       },
@@ -111,8 +111,8 @@
         "type": "n8n-nodes-base.hackerNews",
         "typeVersion": 1,
         "position": [
-          304,
-          80
+          224,
+          160
         ],
         "onError": "continueRegularOutput"
       },
@@ -135,8 +135,8 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.3,
         "position": [
-          304,
-          256
+          224,
+          352
         ],
         "onError": "continueRegularOutput"
       },
@@ -159,8 +159,8 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.3,
         "position": [
-          304,
-          432
+          224,
+          544
         ],
         "onError": "continueRegularOutput"
       },
@@ -174,8 +174,8 @@
         "type": "n8n-nodes-base.rssFeedRead",
         "typeVersion": 1,
         "position": [
-          304,
-          592
+          224,
+          736
         ],
         "onError": "continueRegularOutput"
       },
@@ -186,7 +186,7 @@
         "type": "n8n-nodes-base.merge",
         "typeVersion": 3,
         "position": [
-          592,
+          448,
           -512
         ]
       },
@@ -197,8 +197,8 @@
         "type": "n8n-nodes-base.merge",
         "typeVersion": 3,
         "position": [
-          592,
-          -176
+          448,
+          -128
         ]
       },
       {
@@ -208,8 +208,8 @@
         "type": "n8n-nodes-base.merge",
         "typeVersion": 3,
         "position": [
-          592,
-          176
+          448,
+          256
         ]
       },
       {
@@ -219,8 +219,8 @@
         "type": "n8n-nodes-base.merge",
         "typeVersion": 3,
         "position": [
-          592,
-          512
+          448,
+          640
         ]
       },
       {
@@ -230,8 +230,8 @@
         "type": "n8n-nodes-base.merge",
         "typeVersion": 3,
         "position": [
-          832,
-          -352
+          672,
+          -320
         ]
       },
       {
@@ -241,8 +241,8 @@
         "type": "n8n-nodes-base.merge",
         "typeVersion": 3,
         "position": [
-          832,
-          336
+          672,
+          448
         ]
       },
       {
@@ -252,8 +252,8 @@
         "type": "n8n-nodes-base.merge",
         "typeVersion": 3,
         "position": [
-          1072,
-          0
+          896,
+          64
         ]
       },
       {
@@ -265,8 +265,8 @@
         "type": "n8n-nodes-base.code",
         "typeVersion": 2,
         "position": [
-          1312,
-          0
+          1120,
+          64
         ]
       },
       {
@@ -278,8 +278,8 @@
         "type": "n8n-nodes-base.code",
         "typeVersion": 2,
         "position": [
-          1552,
-          0
+          1344,
+          64
         ]
       },
       {
@@ -301,9 +301,10 @@
         "type": "n8n-nodes-base.googleSheets",
         "typeVersion": 4.5,
         "position": [
-          1792,
-          0
+          1568,
+          64
         ],
+        "alwaysOutputData": true,
         "credentials": {
           "googleSheetsOAuth2Api": {
             "id": "mta4sn91Y3TsPhPn",
@@ -321,8 +322,8 @@
         "type": "n8n-nodes-base.code",
         "typeVersion": 2,
         "position": [
-          2032,
-          0
+          1792,
+          64
         ]
       },
       {
@@ -354,8 +355,8 @@
         "type": "n8n-nodes-base.if",
         "typeVersion": 2.2,
         "position": [
-          2272,
-          0
+          2016,
+          64
         ]
       },
       {
@@ -382,8 +383,8 @@
         "type": "@n8n/n8n-nodes-langchain.openAi",
         "typeVersion": 1.8,
         "position": [
-          2512,
-          -128
+          2240,
+          -32
         ],
         "credentials": {
           "openAiApi": {
@@ -395,15 +396,15 @@
       },
       {
         "parameters": {
-          "jsCode": "const aiResponse = $input.first().json;\nconst originalData = $('7. Filter Against History').first().json;\nconst originalTopics = originalData.topics;\n\nlet enriched;\ntry {\n  const text = aiResponse.text || aiResponse.content || aiResponse.message || JSON.stringify(aiResponse);\n  const jsonMatch = text.match(/\\[[\\s\\S]*\\]/);\n  enriched = jsonMatch ? JSON.parse(jsonMatch[0]) : JSON.parse(text);\n} catch (err) {\n  enriched = originalTopics.map(t => ({\n    title: t.title,\n    linkedin_angle: 'Trending AI/automation topic worth discussing',\n    suggested_hook: t.title,\n    suggested_format: 'opinion',\n    relevance_tag: 'Industry News'\n  }));\n}\n\nconst now = new Date();\nconst startOfYear = new Date(now.getFullYear(), 0, 1);\nconst weekNumber = Math.ceil(((now - startOfYear) / 86400000 + startOfYear.getDay() + 1) / 7);\n\nconst fmtDesc = {\n  tip: 'Actionable how-to or shortcut',\n  story: 'Personal narrative with lesson',\n  opinion: 'Informed take on industry trend',\n  hot_take: 'Contrarian or provocative view',\n  listicle: 'Numbered tips or framework'\n};\n\nreturn originalTopics.slice(0, enriched.length).map((topic, i) => {\n  const ai = enriched[i] || {};\n  const fmt = ai.suggested_format || 'opinion';\n\n  const geminiPrompt = 'I want to write a LinkedIn post about this topic:\\n\\n'\n    + 'TOPIC: ' + topic.title + '\\n'\n    + 'SOURCE: ' + topic.source + ' (' + topic.link + ')\\n'\n    + 'CONTEXT: ' + (topic.summary || 'See source article for details.') + '\\n\\n'\n    + 'ANGLE: ' + (ai.linkedin_angle || 'Share your professional perspective') + '\\n'\n    + 'SUGGESTED HOOK: ' + (ai.suggested_hook || topic.title) + '\\n'\n    + 'FORMAT: ' + fmt + ' (' + (fmtDesc[fmt] || 'Professional insight') + ')\\n\\n'\n    + 'Please write a LinkedIn post following my usual writing style. Remember:\\n'\n    + '- Strong hook in the first line (no emojis there)\\n'\n    + '- 800-1800 characters\\n'\n    + '- Line breaks for mobile readability\\n'\n    + '- End with a question or CTA\\n'\n    + '- 3-5 hashtags at the end\\n'\n    + '- No links in the post body';\n\n  return {\n    json: {\n      topic_id: 'TD-' + now.getFullYear() + '-W' + String(weekNumber).padStart(2, '0') + '-' + (i + 1),\n      status: 'new',\n      discovered_at: now.toISOString(),\n      week_number: weekNumber,\n      title: topic.title,\n      source: topic.source,\n      source_url: topic.link,\n      summary: (topic.summary || '').substring(0, 300),\n      linkedin_angle: ai.linkedin_angle || '',\n      suggested_hook: ai.suggested_hook || '',\n      suggested_format: fmt,\n      relevance_tag: ai.relevance_tag || 'Industry News',\n      score: topic.score,\n      gemini_prompt: geminiPrompt,\n      notes: ''\n    }\n  };\n});"
+          "jsCode": "const aiResponse = $input.first().json;\nconst originalData = $('7. Filter Against History').first().json;\nconst originalTopics = originalData.topics;\n\nlet enriched;\ntry {\n  const text = aiResponse.text || aiResponse.content || aiResponse.message || JSON.stringify(aiResponse);\n  const jsonMatch = text.match(/\\[[\\s\\S]*\\]/);\n  enriched = jsonMatch ? JSON.parse(jsonMatch[0]) : JSON.parse(text);\n} catch (err) {\n  enriched = originalTopics.map(t => ({\n    title: t.title,\n    linkedin_angle: 'Trending AI/automation topic worth discussing',\n    suggested_hook: t.title,\n    suggested_format: 'opinion',\n    relevance_tag: 'Industry News'\n  }));\n}\n\nconst now = new Date();\nconst startOfYear = new Date(now.getFullYear(), 0, 1);\nconst weekNumber = Math.ceil(((now - startOfYear) / 86400000 + startOfYear.getDay() + 1) / 7);\n\nreturn originalTopics.slice(0, enriched.length).map((topic, i) => {\n  const ai = enriched[i] || {};\n  const fmt = ai.suggested_format || 'opinion';\n\n  const geminiPrompt = 'Write a LinkedIn post about: ' + topic.title + '\\n\\n'\n    + 'Source: ' + (topic.link || '') + '\\n\\n'\n    + 'Context: ' + (topic.summary || 'See source article for details.') + '\\n\\n'\n    + 'Angle: ' + (ai.linkedin_angle || 'Share your professional perspective') + '\\n'\n    + 'Format: ' + fmt;\n\n  return {\n    json: {\n      topic_id: 'TD-' + now.getFullYear() + '-W' + String(weekNumber).padStart(2, '0') + '-' + (i + 1),\n      status: 'new',\n      discovered_at: now.toISOString(),\n      week_number: weekNumber,\n      title: topic.title,\n      source: topic.source,\n      source_url: topic.link,\n      summary: (topic.summary || '').substring(0, 300),\n      linkedin_angle: ai.linkedin_angle || '',\n      suggested_hook: ai.suggested_hook || '',\n      suggested_format: fmt,\n      relevance_tag: ai.relevance_tag || 'Industry News',\n      score: topic.score,\n      gemini_prompt: geminiPrompt,\n      notes: ''\n    }\n  };\n});"
         },
         "id": "parse_build",
         "name": "10. Parse & Build Prompts",
         "type": "n8n-nodes-base.code",
         "typeVersion": 2,
         "position": [
-          2752,
-          -128
+          2592,
+          -32
         ]
       },
       {
@@ -434,8 +435,8 @@
         "type": "n8n-nodes-base.googleSheets",
         "typeVersion": 4.5,
         "position": [
-          2992,
-          -128
+          2816,
+          -32
         ],
         "credentials": {
           "googleSheetsOAuth2Api": {
@@ -447,22 +448,22 @@
       },
       {
         "parameters": {
-          "jsCode": "const items = $input.all();\nconst weekNum = items[0].json.week_number;\n\nconst cards = items.map((item, i) => {\n  const t = item.json;\n  const badgeColor = t.score >= 70 ? '#e74c3c' : t.score >= 50 ? '#f39c12' : '#3498db';\n  const badge = t.score >= 70 ? 'HOT' : t.score >= 50 ? 'Strong' : 'Worth noting';\n  const fmtEmoji = { tip: '💡', story: '📖', opinion: '🎯', hot_take: '🔥', listicle: '📋' };\n\n  return '<div style=\"background:white;border:1px solid #e0e0e0;border-radius:8px;padding:20px;margin:12px 20px;\">'\n    + '<div style=\"margin-bottom:8px;\"><span style=\"background:' + badgeColor + ';color:white;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:bold;\">#' + (i+1) + ' | ' + badge + ' (' + t.score + '/100)</span>'\n    + '<span style=\"float:right;font-size:12px;color:#888;\">' + t.source + '</span></div>'\n    + '<h3 style=\"margin:0 0 8px;color:#333;font-size:16px;\">' + t.title + '</h3>'\n    + '<p style=\"color:#555;font-size:14px;margin:0 0 8px;line-height:1.4;\">' + t.linkedin_angle + '</p>'\n    + '<div style=\"font-size:13px;color:#888;margin-bottom:12px;\">' + (fmtEmoji[t.suggested_format] || '📝') + ' <strong>' + t.suggested_format + '</strong> | 🏷️ ' + t.relevance_tag + ' | <a href=\"' + t.source_url + '\" style=\"color:#0077B5;\">Read source</a></div>'\n    + '<div style=\"background:#f8f9fa;border:1px solid #e0e0e0;border-radius:4px;padding:12px;\">'\n    + '<div style=\"font-size:13px;font-weight:bold;color:#0077B5;margin-bottom:8px;\">📋 Gemini Prompt (copy & paste):</div>'\n    + '<pre style=\"white-space:pre-wrap;font-size:12px;line-height:1.5;font-family:Courier New,monospace;margin:0;color:#333;\">' + t.gemini_prompt + '</pre>'\n    + '</div></div>';\n}).join('');\n\nreturn [{ json: { topicCardsHtml: cards, weekNumber: weekNum, topicCount: items.length } }];"
+          "jsCode": "const items = $input.all();\nconst weekNum = items[0].json.week_number;\n\nconst cards = items.map((item, i) => {\n  const t = item.json;\n  const badgeColor = t.score >= 70 ? '#e74c3c' : t.score >= 50 ? '#f39c12' : '#3498db';\n  const badge = t.score >= 70 ? 'HOT' : t.score >= 50 ? 'Strong' : 'Worth noting';\n  const fmtEmoji = { tip: '💡', story: '📖', opinion: '🎯', hot_take: '🔥', listicle: '📋' };\n\n  return '<div style=\"background:white;border:1px solid #e0e0e0;border-radius:8px;padding:20px;margin:12px 20px;\">'\n    + '<div style=\"margin-bottom:8px;\"><span style=\"background:' + badgeColor + ';color:white;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:bold;\">#' + (i+1) + ' | ' + badge + ' (' + t.score + '/100)</span>'\n    + '<span style=\"float:right;font-size:12px;color:#888;\">' + t.source + '</span></div>'\n    + '<h3 style=\"margin:0 0 8px;color:#333;font-size:16px;\">' + t.title + '</h3>'\n    + '<p style=\"color:#555;font-size:14px;margin:0 0 8px;line-height:1.4;\">' + t.linkedin_angle + '</p>'\n    + '<div style=\"font-size:13px;color:#888;margin-bottom:12px;\">' + (fmtEmoji[t.suggested_format] || '📝') + ' <strong>' + t.suggested_format + '</strong> | 🏷️ ' + t.relevance_tag + ' | <a href=\"' + t.source_url + '\" style=\"color:#0077B5;\">Read source</a></div>'\n    + '<div style=\"background:#f8f9fa;border:1px solid #e0e0e0;border-radius:4px;padding:12px;\">'\n    + '<div style=\"font-size:13px;font-weight:bold;color:#0077B5;margin-bottom:8px;\">📋 Gem Brief (copy & paste):</div>'\n    + '<pre style=\"white-space:pre-wrap;font-size:12px;line-height:1.5;font-family:Courier New,monospace;margin:0;color:#333;\">' + t.gemini_prompt + '</pre>'\n    + '</div></div>';\n}).join('');\n\nreturn [{ json: { topicCardsHtml: cards, weekNumber: weekNum, topicCount: items.length } }];"
         },
         "id": "build_email",
         "name": "11b. Build Email HTML",
         "type": "n8n-nodes-base.code",
         "typeVersion": 2,
         "position": [
-          3232,
-          -128
+          3040,
+          -32
         ]
       },
       {
         "parameters": {
-          "sendTo": "={{ $env.NOTIFICATION_EMAIL }}",
+          "sendTo": "=mikolaj.wojnarowski@wdrazaj.ai",
           "subject": "=LinkedIn Topic Brief - Week {{ $json.weekNumber }} ({{ $json.topicCount }} topics)",
-          "message": "=<div style=\"font-family:-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif;max-width:700px;margin:0 auto;\"><div style=\"background:#0077B5;color:white;padding:20px;border-radius:8px 8px 0 0;\"><h1 style=\"margin:0;font-size:22px;\">Weekly LinkedIn Topic Brief</h1><p style=\"margin:8px 0 0;opacity:0.9;\">Week {{ $json.weekNumber }} | {{ $json.topicCount }} curated topics</p></div><div style=\"padding:16px 20px;background:#f0f7fb;border-bottom:1px solid #e0e0e0;\"><p style=\"margin:0;color:#555;font-size:14px;\"><strong>Your workflow:</strong> Pick topic → Copy Gemini prompt → Paste to Gem → Refine → Paste to Posts sheet as approved</p></div>{{ $json.topicCardsHtml }}<div style=\"background:#f8f9fa;border-radius:0 0 8px 8px;padding:16px 20px;text-align:center;\"><a href=\"{{ $env.LINKEDIN_SHEET_URL }}\" style=\"background:#0077B5;color:white;padding:10px 20px;text-decoration:none;border-radius:5px;font-weight:bold;\">Open Content Calendar</a></div></div>",
+          "message": "=<div style=\"font-family:-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif;max-width:700px;margin:0 auto;\"><div style=\"background:#0077B5;color:white;padding:20px;border-radius:8px 8px 0 0;\"><h1 style=\"margin:0;font-size:22px;\">Weekly LinkedIn Topic Brief</h1><p style=\"margin:8px 0 0;opacity:0.9;\">Week {{ $json.weekNumber }} | {{ $json.topicCount }} curated topics</p></div><div style=\"padding:16px 20px;background:#f0f7fb;border-bottom:1px solid #e0e0e0;\"><p style=\"margin:0;color:#555;font-size:14px;\"><strong>Your workflow:</strong> Pick topic → Copy Gemini prompt → Paste to Gem → Refine → Paste to Posts sheet as approved</p></div>{{ $json.topicCardsHtml }}<div style=\"background:#f8f9fa;border-radius:0 0 8px 8px;padding:16px 20px;text-align:center;\"><a href=\"https://docs.google.com/spreadsheets/d/18hU6i0dyC2N25qaJX9onuVGzZqzy51RPDpPsjLLv6B4/edit?gid=0#gid=0\" style=\"background:#0077B5;color:white;padding:10px 20px;text-decoration:none;border-radius:5px;font-weight:bold;\">Open Content Calendar</a></div></div>",
           "options": {}
         },
         "id": "send_email",
@@ -470,8 +471,8 @@
         "type": "n8n-nodes-base.gmail",
         "typeVersion": 2.1,
         "position": [
-          3472,
-          -128
+          3264,
+          -32
         ],
         "webhookId": "19af68ff-3153-42fa-a1b8-11d411a59bc4",
         "credentials": {
@@ -483,9 +484,9 @@
       },
       {
         "parameters": {
-          "sendTo": "={{ $env.NOTIFICATION_EMAIL }}",
+          "sendTo": "=mikolaj.wojnarowski@wdrazaj.ai",
           "subject": "LinkedIn Topic Discovery: No fresh topics found this week",
-          "message": "=<h2>No Fresh Topics Found</h2><p>The LinkedIn Topic Discovery workflow could not find enough fresh AI/automation topics this week.</p><p><a href=\"{{ $env.LINKEDIN_SHEET_URL }}\">Open Content Calendar</a></p>",
+          "message": "=<h2>No Fresh Topics Found</h2><p>The LinkedIn Topic Discovery workflow could not find enough fresh AI/automation topics this week.</p><p><a href=\"https://docs.google.com/spreadsheets/d/18hU6i0dyC2N25qaJX9onuVGzZqzy51RPDpPsjLLv6B4/edit?gid=0#gid=0\" >Open Content Calendar</a></p>",
           "options": {}
         },
         "id": "no_topics",
@@ -493,8 +494,8 @@
         "type": "n8n-nodes-base.gmail",
         "typeVersion": 2.1,
         "position": [
-          2512,
-          128
+          2304,
+          160
         ],
         "webhookId": "b3b2e8fa-953d-4d8d-ac71-82650298359b",
         "credentials": {
@@ -838,7 +839,7 @@
       "templateCredsSetupCompleted": true
     },
     "pinData": {},
-    "versionId": "7cef452f-616f-4c44-af43-ed1f916e25dd",
+    "versionId": "b3dcb44d-a2e0-4854-b4ca-1cd25b28a84e",
     "activeVersionId": null,
     "triggerCount": 0,
     "shared": [
