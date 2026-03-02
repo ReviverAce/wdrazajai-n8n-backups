@@ -1,19 +1,19 @@
 {
-  "last_backup": "2026-03-01T13:19:07.386Z",
+  "last_backup": "2026-03-02T02:02:43.682Z",
   "n8n_instance": "https://wdrazajai.app.n8n.cloud",
   "total_workflows": 50,
   "by_status": {
-    "active": 19,
-    "inactive": 31,
-    "archived": 0
+    "active": 20,
+    "inactive": 29,
+    "archived": 1
   },
   "workflows": [
     {
       "id": "KBBzMAIf23V56fOj",
       "name": "[ARCHIVED] LinkedIn Content Generator",
-      "file": "inactive/archived-linkedin-content-generator_KBBzMAIf23V56fOj.json",
-      "status": "inactive",
-      "updated_at": "2026-02-28T16:59:20.954Z"
+      "file": "archived/archived-linkedin-content-generator_KBBzMAIf23V56fOj.json",
+      "status": "archived",
+      "updated_at": "2026-03-01T14:10:46.000Z"
     },
     {
       "id": "TFQksKZRnjCQNBqv",
@@ -48,7 +48,7 @@
       "name": "[DEV] INEL - INVOICE AUTOMATION",
       "file": "active/dev-inel-invoice-automation_GXONhlMWZedkD0jw.json",
       "status": "active",
-      "updated_at": "2026-02-09T13:29:14.286Z"
+      "updated_at": "2026-03-01T13:23:10.895Z"
     },
     {
       "id": "VUTTefqWC9CjyAHdCTq79",
@@ -76,7 +76,7 @@
       "name": "[DEV] LinkedIn Topic Discovery",
       "file": "inactive/dev-linkedin-topic-discovery_DR5yFwrBmGxVdbFr.json",
       "status": "inactive",
-      "updated_at": "2026-02-28T17:25:11.060Z"
+      "updated_at": "2026-03-01T14:10:10.100Z"
     },
     {
       "id": "WkMwFfioCrfq1PfA",
@@ -200,9 +200,9 @@
     {
       "id": "wmbYhKHXUj9RZwpK",
       "name": "[PROD] WAI - Backup Workflows to GitHub",
-      "file": "inactive/prod-wai-backup-workflows-to-github_wmbYhKHXUj9RZwpK.json",
-      "status": "inactive",
-      "updated_at": "2026-03-01T13:15:27.230Z"
+      "file": "active/prod-wai-backup-workflows-to-github_wmbYhKHXUj9RZwpK.json",
+      "status": "active",
+      "updated_at": "2026-03-01T13:23:52.078Z"
     },
     {
       "id": "yZhRy919iluDOIrx",
