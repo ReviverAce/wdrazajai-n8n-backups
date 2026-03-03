@@ -1,5 +1,5 @@
 {
-  "last_backup": "2026-03-02T02:02:43.682Z",
+  "last_backup": "2026-03-03T02:02:43.608Z",
   "n8n_instance": "https://wdrazajai.app.n8n.cloud",
   "total_workflows": 50,
   "by_status": {
@@ -335,7 +335,7 @@
       "name": "Składki ZUS - wysyłka e-maili",
       "file": "active/sk-adki-zus-wysy-ka-e-maili_rFQgMBlcagTmSpt8.json",
       "status": "active",
-      "updated_at": "2026-02-26T20:32:05.000Z"
+      "updated_at": "2026-03-02T09:31:45.579Z"
     },
     {
       "id": "icXKpiNsCOY9nYHS",
