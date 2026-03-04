@@ -1,5 +1,5 @@
 {
-  "last_backup": "2026-03-03T02:02:43.608Z",
+  "last_backup": "2026-03-04T02:03:41.807Z",
   "n8n_instance": "https://wdrazajai.app.n8n.cloud",
   "total_workflows": 50,
   "by_status": {
@@ -100,48 +100,6 @@
       "updated_at": "2026-02-14T09:52:28.696Z"
     },
     {
-      "id": "ehPQEJaj38OVE7zy",
-      "name": "[Enxoo AI Ideas] 1. AI ideas form assistant",
-      "file": "inactive/enxoo-ai-ideas-1-ai-ideas-form-assistant_ehPQEJaj38OVE7zy.json",
-      "status": "inactive",
-      "updated_at": "2026-01-16T07:53:31.000Z"
-    },
-    {
-      "id": "6Tw7RUD5WNcHOPr9",
-      "name": "[Enxoo AI Ideas] 1.1 Add Idea row to AI IDEAS database",
-      "file": "inactive/enxoo-ai-ideas-1-1-add-idea-row-to-ai-ideas-database_6Tw7RUD5WNcHOPr9.json",
-      "status": "inactive",
-      "updated_at": "2026-01-16T07:53:47.000Z"
-    },
-    {
-      "id": "WYWP3xH8Wf1Fnkzz",
-      "name": "[Enxoo AI Ideas] 2. Score card assistant",
-      "file": "inactive/enxoo-ai-ideas-2-score-card-assistant_WYWP3xH8Wf1Fnkzz.json",
-      "status": "inactive",
-      "updated_at": "2026-01-16T07:54:05.000Z"
-    },
-    {
-      "id": "xhRr0uFw4pyfhDU0",
-      "name": "[Enxoo AI Ideas] 3. Hypothesis assistant",
-      "file": "inactive/enxoo-ai-ideas-3-hypothesis-assistant_xhRr0uFw4pyfhDU0.json",
-      "status": "inactive",
-      "updated_at": "2026-01-16T07:54:16.000Z"
-    },
-    {
-      "id": "bsTAdNrtFHGzg6Wp",
-      "name": "[Enxoo AI Ideas] 4. Research brief assistant",
-      "file": "inactive/enxoo-ai-ideas-4-research-brief-assistant_bsTAdNrtFHGzg6Wp.json",
-      "status": "inactive",
-      "updated_at": "2026-01-16T07:54:32.473Z"
-    },
-    {
-      "id": "MKHvlo7luAfjYfeA",
-      "name": "[Enxoo AI Ideas] Transfer manual form ideas to automation",
-      "file": "inactive/enxoo-ai-ideas-transfer-manual-form-ideas-to-automation_MKHvlo7luAfjYfeA.json",
-      "status": "inactive",
-      "updated_at": "2026-01-16T07:55:13.115Z"
-    },
-    {
       "id": "01SIEHUa1tY1Aj4D",
       "name": "[MIWOJ] Google Drive → NotebookLM Enterprise",
       "file": "inactive/miwoj-google-drive-notebooklm-enterprise_01SIEHUa1tY1Aj4D.json",
@@ -224,6 +182,41 @@
       "file": "active/prod-wai-support-check_QadmkLcu1QUTMg2Y.json",
       "status": "active",
       "updated_at": "2026-02-13T02:26:21.004Z"
+    },
+    {
+      "id": "ehPQEJaj38OVE7zy",
+      "name": "1. AI ideas form assistant",
+      "file": "inactive/1-ai-ideas-form-assistant_ehPQEJaj38OVE7zy.json",
+      "status": "inactive",
+      "updated_at": "2026-03-03T03:29:02.934Z"
+    },
+    {
+      "id": "6Tw7RUD5WNcHOPr9",
+      "name": "1.1 Add Idea row to AI IDEAS database",
+      "file": "inactive/1-1-add-idea-row-to-ai-ideas-database_6Tw7RUD5WNcHOPr9.json",
+      "status": "inactive",
+      "updated_at": "2026-03-03T03:29:12.042Z"
+    },
+    {
+      "id": "WYWP3xH8Wf1Fnkzz",
+      "name": "2. Score card assistant",
+      "file": "inactive/2-score-card-assistant_WYWP3xH8Wf1Fnkzz.json",
+      "status": "inactive",
+      "updated_at": "2026-03-03T03:29:27.201Z"
+    },
+    {
+      "id": "xhRr0uFw4pyfhDU0",
+      "name": "3. Hypothesis assistant",
+      "file": "inactive/3-hypothesis-assistant_xhRr0uFw4pyfhDU0.json",
+      "status": "inactive",
+      "updated_at": "2026-03-03T03:29:36.554Z"
+    },
+    {
+      "id": "bsTAdNrtFHGzg6Wp",
+      "name": "4. Research brief assistant",
+      "file": "inactive/4-research-brief-assistant_bsTAdNrtFHGzg6Wp.json",
+      "status": "inactive",
+      "updated_at": "2026-03-03T03:29:43.528Z"
     },
     {
       "id": "NMNpyAnI9qwnPeLwL-EN6",
@@ -350,6 +343,13 @@
       "file": "inactive/stolarz-mirek_zm6YHp6xpJdMar3J.json",
       "status": "inactive",
       "updated_at": "2025-12-07T12:24:50.000Z"
+    },
+    {
+      "id": "MKHvlo7luAfjYfeA",
+      "name": "Transfer manual form ideas to automation",
+      "file": "inactive/transfer-manual-form-ideas-to-automation_MKHvlo7luAfjYfeA.json",
+      "status": "inactive",
+      "updated_at": "2026-03-03T03:29:54.398Z"
     },
     {
       "id": "qYf94yUx6nWcvXwI",
