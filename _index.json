@@ -1,11 +1,11 @@
 {
-  "last_backup": "2026-03-04T02:03:41.807Z",
+  "last_backup": "2026-03-05T02:04:13.538Z",
   "n8n_instance": "https://wdrazajai.app.n8n.cloud",
   "total_workflows": 50,
   "by_status": {
     "active": 20,
-    "inactive": 29,
-    "archived": 1
+    "inactive": 28,
+    "archived": 2
   },
   "workflows": [
     {
@@ -79,25 +79,18 @@
       "updated_at": "2026-03-01T14:10:10.100Z"
     },
     {
-      "id": "WkMwFfioCrfq1PfA",
-      "name": "[DEV] Polsat Media - Multi-Source Image Enrichment v2",
-      "file": "inactive/dev-polsat-media-multi-source-image-enrichment-v2_WkMwFfioCrfq1PfA.json",
-      "status": "inactive",
-      "updated_at": "2026-02-27T14:23:04.884Z"
-    },
-    {
       "id": "vKQHvPhQwx1O2FUTyLd1W",
-      "name": "[DEV] Polsat Media - TMDB Multi-Image Enrichment",
-      "file": "active/dev-polsat-media-tmdb-multi-image-enrichment_vKQHvPhQwx1O2FUTyLd1W.json",
-      "status": "active",
-      "updated_at": "2026-02-09T14:08:06.247Z"
+      "name": "[DEV] Polsat Media - TMDB Multi-Image Enrichment - spreadsheet",
+      "file": "inactive/dev-polsat-media-tmdb-multi-image-enrichment-spreadsheet_vKQHvPhQwx1O2FUTyLd1W.json",
+      "status": "inactive",
+      "updated_at": "2026-03-04T08:50:42.913Z"
     },
     {
       "id": "6uSATTgLLkCizWs0",
       "name": "[DEV] Polsat Media - TMDB Multi-Image Enrichment (Excel)",
-      "file": "inactive/dev-polsat-media-tmdb-multi-image-enrichment-excel_6uSATTgLLkCizWs0.json",
-      "status": "inactive",
-      "updated_at": "2026-02-14T09:52:28.696Z"
+      "file": "archived/dev-polsat-media-tmdb-multi-image-enrichment-excel_6uSATTgLLkCizWs0.json",
+      "status": "archived",
+      "updated_at": "2026-03-04T08:50:56.000Z"
     },
     {
       "id": "01SIEHUa1tY1Aj4D",
@@ -147,6 +140,13 @@
       "file": "active/prod-inel-supabase-heartbeat_mKU2GLEOS3GxixMD.json",
       "status": "active",
       "updated_at": "2026-02-25T14:18:23.447Z"
+    },
+    {
+      "id": "WkMwFfioCrfq1PfA",
+      "name": "[PROD] Polsat Media - Multi-Source Image Enrichment",
+      "file": "active/prod-polsat-media-multi-source-image-enrichment_WkMwFfioCrfq1PfA.json",
+      "status": "active",
+      "updated_at": "2026-03-04T09:36:14.225Z"
     },
     {
       "id": "qbOSaENwdtXKQhbo",
