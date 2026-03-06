@@ -1,10 +1,10 @@
 {
-  "last_backup": "2026-03-05T02:04:13.538Z",
+  "last_backup": "2026-03-06T02:04:23.040Z",
   "n8n_instance": "https://wdrazajai.app.n8n.cloud",
-  "total_workflows": 50,
+  "total_workflows": 51,
   "by_status": {
     "active": 20,
-    "inactive": 28,
+    "inactive": 29,
     "archived": 2
   },
   "workflows": [
@@ -91,6 +91,13 @@
       "file": "archived/dev-polsat-media-tmdb-multi-image-enrichment-excel_6uSATTgLLkCizWs0.json",
       "status": "archived",
       "updated_at": "2026-03-04T08:50:56.000Z"
+    },
+    {
+      "id": "Weoq0GinVWdWzPCv",
+      "name": "[DEV] ZUS + PIT4 - Drafty Gmail",
+      "file": "inactive/dev-zus-pit4-drafty-gmail_Weoq0GinVWdWzPCv.json",
+      "status": "inactive",
+      "updated_at": "2026-03-05T15:04:16.979Z"
     },
     {
       "id": "01SIEHUa1tY1Aj4D",
