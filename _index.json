@@ -1,11 +1,11 @@
 {
-  "last_backup": "2026-03-09T02:05:27.703Z",
+  "last_backup": "2026-03-10T02:06:56.875Z",
   "n8n_instance": "https://wdrazajai.app.n8n.cloud",
-  "total_workflows": 56,
+  "total_workflows": 63,
   "by_status": {
-    "active": 25,
-    "inactive": 29,
-    "archived": 2
+    "active": 21,
+    "inactive": 31,
+    "archived": 11
   },
   "workflows": [
     {
@@ -14,6 +14,20 @@
       "file": "archived/archived-linkedin-content-generator_KBBzMAIf23V56fOj.json",
       "status": "archived",
       "updated_at": "2026-03-01T14:10:46.000Z"
+    },
+    {
+      "id": "IzVuiretq8rIj7uM",
+      "name": "[DEV] DEMO-TEST - ERROR HANDLING",
+      "file": "archived/dev-demo-test-error-handling_IzVuiretq8rIj7uM.json",
+      "status": "archived",
+      "updated_at": "2026-03-09T08:59:29.000Z"
+    },
+    {
+      "id": "qET7eMWJ7RUPwHxI",
+      "name": "[DEV] DEMO-TEST - MONITORING",
+      "file": "archived/dev-demo-test-monitoring_qET7eMWJ7RUPwHxI.json",
+      "status": "archived",
+      "updated_at": "2026-03-09T08:59:24.000Z"
     },
     {
       "id": "TFQksKZRnjCQNBqv",
@@ -35,6 +49,20 @@
       "file": "inactive/dev-fifo-ksef-send-invoice_VbIHpBW3xKfcm3lF.json",
       "status": "inactive",
       "updated_at": "2026-02-02T14:11:38.151Z"
+    },
+    {
+      "id": "8Cp8DTcas1gO3gVw",
+      "name": "[DEV] GODZILLA - ERROR HANDLING",
+      "file": "archived/dev-godzilla-error-handling_8Cp8DTcas1gO3gVw.json",
+      "status": "archived",
+      "updated_at": "2026-03-09T04:41:24.000Z"
+    },
+    {
+      "id": "Ma7k1NUv1gFh6Pd6",
+      "name": "[DEV] GODZILLA - MONITORING",
+      "file": "archived/dev-godzilla-monitoring_Ma7k1NUv1gFh6Pd6.json",
+      "status": "archived",
+      "updated_at": "2026-03-09T04:41:19.000Z"
     },
     {
       "id": "gfVnKUahFYsoEF8EyW3U8",
@@ -81,30 +109,30 @@
     {
       "id": "xCO4qR5EG4pPChW2",
       "name": "[DEV] MIKO TEST - ERROR HANDLING",
-      "file": "active/dev-miko-test-error-handling_xCO4qR5EG4pPChW2.json",
-      "status": "active",
-      "updated_at": "2026-03-08T14:37:16.000Z"
+      "file": "archived/dev-miko-test-error-handling_xCO4qR5EG4pPChW2.json",
+      "status": "archived",
+      "updated_at": "2026-03-09T02:05:16.000Z"
     },
     {
       "id": "zNmTuMjvo0pwQqlL",
       "name": "[DEV] MIKO TEST - MONITORING",
-      "file": "active/dev-miko-test-monitoring_zNmTuMjvo0pwQqlL.json",
-      "status": "active",
-      "updated_at": "2026-03-08T14:12:50.621Z"
+      "file": "archived/dev-miko-test-monitoring_zNmTuMjvo0pwQqlL.json",
+      "status": "archived",
+      "updated_at": "2026-03-09T02:05:11.000Z"
     },
     {
       "id": "1HWCiNwfd9TNlqm1",
       "name": "[DEV] MIWOJEK - ERROR HANDLING",
-      "file": "active/dev-miwojek-error-handling_1HWCiNwfd9TNlqm1.json",
-      "status": "active",
-      "updated_at": "2026-03-08T14:53:31.672Z"
+      "file": "archived/dev-miwojek-error-handling_1HWCiNwfd9TNlqm1.json",
+      "status": "archived",
+      "updated_at": "2026-03-09T03:55:50.000Z"
     },
     {
       "id": "H2mER1iYPBXfrPEw",
       "name": "[DEV] MIWOJEK - MONITORING",
-      "file": "active/dev-miwojek-monitoring_H2mER1iYPBXfrPEw.json",
-      "status": "active",
-      "updated_at": "2026-03-08T14:54:18.584Z"
+      "file": "archived/dev-miwojek-monitoring_H2mER1iYPBXfrPEw.json",
+      "status": "archived",
+      "updated_at": "2026-03-09T03:55:45.000Z"
     },
     {
       "id": "vKQHvPhQwx1O2FUTyLd1W",
@@ -121,11 +149,25 @@
       "updated_at": "2026-03-04T08:50:56.000Z"
     },
     {
+      "id": "QHUuKRXCchttaW8g",
+      "name": "[DEV] TAXBIURO - ERROR HANDLING",
+      "file": "inactive/dev-taxbiuro-error-handling_QHUuKRXCchttaW8g.json",
+      "status": "inactive",
+      "updated_at": "2026-03-09T03:43:32.605Z"
+    },
+    {
+      "id": "Aj2lGVBZ9Wxlq6Nx",
+      "name": "[DEV] TAXBIURO - MONITORING",
+      "file": "inactive/dev-taxbiuro-monitoring_Aj2lGVBZ9Wxlq6Nx.json",
+      "status": "inactive",
+      "updated_at": "2026-03-09T04:02:52.491Z"
+    },
+    {
       "id": "Weoq0GinVWdWzPCv",
       "name": "[DEV] TAXBIURO - WEBHOOK TO MAIL",
       "file": "active/dev-taxbiuro-webhook-to-mail_Weoq0GinVWdWzPCv.json",
       "status": "active",
-      "updated_at": "2026-03-08T01:01:39.262Z"
+      "updated_at": "2026-03-09T03:42:37.609Z"
     },
     {
       "id": "01SIEHUa1tY1Aj4D",
@@ -220,10 +262,17 @@
     },
     {
       "id": "ehPQEJaj38OVE7zy",
-      "name": "1. AI ideas form assistant",
-      "file": "inactive/1-ai-ideas-form-assistant_ehPQEJaj38OVE7zy.json",
+      "name": "1. AI ideas form assistant (Slack)",
+      "file": "inactive/1-ai-ideas-form-assistant-slack_ehPQEJaj38OVE7zy.json",
       "status": "inactive",
-      "updated_at": "2026-03-03T03:29:02.934Z"
+      "updated_at": "2026-03-09T14:27:29.896Z"
+    },
+    {
+      "id": "UoxMdnTQYdEtQ4HU",
+      "name": "1. AI ideas form assistant copy",
+      "file": "inactive/1-ai-ideas-form-assistant-copy_UoxMdnTQYdEtQ4HU.json",
+      "status": "inactive",
+      "updated_at": "2026-03-09T09:24:03.462Z"
     },
     {
       "id": "6Tw7RUD5WNcHOPr9",
@@ -270,9 +319,9 @@
     {
       "id": "yNwhSgS4FeccXGvR",
       "name": "Daily Calendar Briefing Email",
-      "file": "inactive/daily-calendar-briefing-email_yNwhSgS4FeccXGvR.json",
-      "status": "inactive",
-      "updated_at": "2026-03-06T09:43:58.746Z"
+      "file": "archived/daily-calendar-briefing-email_yNwhSgS4FeccXGvR.json",
+      "status": "archived",
+      "updated_at": "2026-03-09T02:05:37.000Z"
     },
     {
       "id": "yNxGeVVXGbI8JmuA",
