@@ -1,10 +1,10 @@
 {
-  "last_backup": "2026-03-11T02:07:08.041Z",
+  "last_backup": "2026-03-12T02:07:38.633Z",
   "n8n_instance": "https://wdrazajai.app.n8n.cloud",
-  "total_workflows": 64,
+  "total_workflows": 66,
   "by_status": {
     "active": 22,
-    "inactive": 31,
+    "inactive": 33,
     "archived": 11
   },
   "workflows": [
@@ -167,7 +167,21 @@
       "name": "[DEV] TAXBIURO - WEBHOOK TO MAIL",
       "file": "active/dev-taxbiuro-webhook-to-mail_Weoq0GinVWdWzPCv.json",
       "status": "active",
-      "updated_at": "2026-03-11T01:47:29.967Z"
+      "updated_at": "2026-03-11T14:07:17.911Z"
+    },
+    {
+      "id": "qHGWzhBE36hqagzi",
+      "name": "[EnxAgent] AI Ideas Agent (Sub-Workflow)",
+      "file": "inactive/enxagent-ai-ideas-agent-sub-workflow_qHGWzhBE36hqagzi.json",
+      "status": "inactive",
+      "updated_at": "2026-03-11T13:21:08.051Z"
+    },
+    {
+      "id": "MEJ4ctgZEpFFfFoC",
+      "name": "[EnxAgent] Router",
+      "file": "inactive/enxagent-router_MEJ4ctgZEpFFfFoC.json",
+      "status": "inactive",
+      "updated_at": "2026-03-11T13:21:23.496Z"
     },
     {
       "id": "01SIEHUa1tY1Aj4D",
@@ -272,7 +286,7 @@
       "name": "1. AI ideas form assistant (Slack)",
       "file": "inactive/1-ai-ideas-form-assistant-slack_ehPQEJaj38OVE7zy.json",
       "status": "inactive",
-      "updated_at": "2026-03-09T14:27:29.896Z"
+      "updated_at": "2026-03-11T13:01:40.985Z"
     },
     {
       "id": "UoxMdnTQYdEtQ4HU",
