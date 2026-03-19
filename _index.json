@@ -1,10 +1,10 @@
 {
-  "last_backup": "2026-03-18T02:07:34.744Z",
+  "last_backup": "2026-03-19T02:07:59.846Z",
   "n8n_instance": "https://wdrazajai.app.n8n.cloud",
-  "total_workflows": 66,
+  "total_workflows": 68,
   "by_status": {
     "active": 22,
-    "inactive": 33,
+    "inactive": 35,
     "archived": 11
   },
   "workflows": [
@@ -189,6 +189,20 @@
       "file": "inactive/enxagent-router_WzpjEDJ3TjgxxeRE.json",
       "status": "inactive",
       "updated_at": "2026-03-13T12:44:25.749Z"
+    },
+    {
+      "id": "iowG4KhPd9Jrn5Sx",
+      "name": "[Enxoo AI Ideas] 1. AI ideas form assistant - GOOGLE CHAT",
+      "file": "inactive/enxoo-ai-ideas-1-ai-ideas-form-assistant-google-chat_iowG4KhPd9Jrn5Sx.json",
+      "status": "inactive",
+      "updated_at": "2026-03-18T09:23:11.000Z"
+    },
+    {
+      "id": "ldnfzZmHgf17CspS",
+      "name": "[Enxoo AI Ideas] 1. AI ideas form assistant - SLACK",
+      "file": "inactive/enxoo-ai-ideas-1-ai-ideas-form-assistant-slack_ldnfzZmHgf17CspS.json",
+      "status": "inactive",
+      "updated_at": "2026-03-18T09:32:12.429Z"
     },
     {
       "id": "01SIEHUa1tY1Aj4D",
